@@ -15,6 +15,7 @@ This project utilizes the Strava API to pull information about runs and analyze 
 
 5. Run the strava_exploration.py script to analyze your Strava runs.
 
+![Max HR vs Distance.png](visualizations/4.3.23 Max HR vs Distance.png)
 ## Usage
 
 The strava_exploration.py script retrieves all of your runs for the current year and creates a dataframe with the following columns: name, average_speed, suffer_score, upload_id, type, distance, moving_time, max_speed, total_elevation_gain, start_date_local, average_heartrate, max_heartrate, workout_type, elapsed_time, and average_cadence.
