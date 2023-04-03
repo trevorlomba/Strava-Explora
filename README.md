@@ -13,9 +13,7 @@ This project utilizes the Strava API to pull information about runs and analyze 
 
 4. Change the following fields in the strava_api.py file to your own Strava API credentials: client_id, client_secret, refresh_token.
 
-5. Run the strava_api.py script.
-
-6. Run the run_analysis.py script to analyze your Strava runs.
+5. Run the strava_explora.py script to analyze your Strava runs.
 
 ## Usage
 
