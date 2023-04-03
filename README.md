@@ -1,23 +1,23 @@
 # Strava-Explora
 
 This project utilizes the Strava API to pull information about runs and analyze them using Python. The data is manipulated and visualized using Pandas, Seaborn, Matplotlib, Numpy, and Datetime libraries.
-Installation
 
-    Create an account on Strava and go to https://www.strava.com/settings/api to obtain your API key.
+## Installation
 
-    Clone or download this repository.
+1. Create an account on Strava and go to https://www.strava.com/settings/api to obtain your API key. Follow the instructions on this [page](https://www.youtube.com/watch?v=sgscChKfGyg) to grant necessary permissions and retrieve the tokens you need.
 
-    Install the required libraries using the command: pip install -r requirements.txt.
 
-    Change the following fields in the strava_api.py file to your own Strava API credentials: client_id, client_secret, refresh_token.
+2. Clone or download this repository.
 
-    Run the strava_api.py script.
+3. Install the required libraries using the command: pip install -r requirements.txt.
 
-    Run the run_analysis.py script to analyze your Strava runs.
+4. Change the following fields in the strava_api.py file to your own Strava API credentials: client_id, client_secret, refresh_token.
+
+5. Run the strava_exploration.py script to analyze your Strava runs.
 
 ## Usage
 
-The run_analysis.py script retrieves all of your runs for the current year and creates a dataframe with the following columns: name, average_speed, suffer_score, upload_id, type, distance, moving_time, max_speed, total_elevation_gain, start_date_local, average_heartrate, max_heartrate, workout_type, elapsed_time, and average_cadence.
+The strava_exploration.py script retrieves all of your runs for the current year and creates a dataframe with the following columns: name, average_speed, suffer_score, upload_id, type, distance, moving_time, max_speed, total_elevation_gain, start_date_local, average_heartrate, max_heartrate, workout_type, elapsed_time, and average_cadence.
 
 The script then cleans and manipulates the data by converting the date column into a datetime object and breaking it into separate date and time columns, converting distance from meters to miles, calculating pace, and creating additional columns for plotting.
 
