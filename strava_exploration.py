@@ -87,15 +87,31 @@ ax1.plot_date(x, y)  # plot data points in scatter plot on ax1
 ax1.set_title('Average Pace over Time')
 ax1.set_xlabel('Date')
 ax1.set_ylabel('Pace (min/mile)')
-
 # add trend line
 x2 = mdates.date2num(x)
 z = np.polyfit(x2, y, 1)
 p = np.poly1d(z)
 plt.plot(x, p(x2), 'r--')
-
 # format the figure and display
 fig.autofmt_xdate(rotation=45)
+
+# Create the tenth plot
+fig10 = plt.figure(figsize=(10, 6))  # create overall container
+fig10.subplots_adjust(bottom=0.2, left=0.1)  # adjust padding
+ax10 = fig10.add_subplot(111)  # add a 1 by 1 plot to the figure
+x = np.asarray(runs.start_date_local)  # convert data to numpy array
+y = np.asarray(runs.cadence)
+ax10.plot_date(x, y)  # plot data points in scatter plot on ax1
+ax10.set_title('Average Cadence over Time')
+ax10.set_xlabel('Date')
+ax10.set_ylabel('Cadence (steps/min)')
+# add trend line
+x2 = mdates.date2num(x)
+z = np.polyfit(x2, y, 1)
+p = np.poly1d(z)
+plt.plot(x, p(x2), 'r--')
+# format the figure and display
+fig10.autofmt_xdate(rotation=45)
 
 # Create a second plot
 fig2 = plt.figure(figsize=(10, 6))
@@ -153,11 +169,14 @@ ax7.set_ylabel('Max Heart Rate')
 
 # Create the eighth plot
 fig8 = plt.figure()  # create a new figure
+fig8.subplots_adjust(bottom=0.2, left=0.2)
 ax8 = fig8.add_subplot(111)  # add a subplot to the figure
 x = np.asarray(runs.start_date_local)  # extract the start date of each run
 y = np.asarray(runs.pace)  # extract the pace of each run
 ax8.plot_date(x, y)  # plot the pace versus the start date
-ax8.set_title('Average Cadence over Time')  # set the title of the plot
+ax8.set_title('Pace over Time')  # set the title of the plot
+ax8.set_xlabel('Date')  # set the x-axis label
+ax8.set_ylabel('Pace (min/mile)')  # set the y-axis label
 x2 = mdates.date2num(x)  # convert the start date to a numerical format
 z = np.polyfit(x2, y, 1)  # fit a linear trendline to the data
 # create a polynomial function from the trendline coefficients
@@ -167,12 +186,15 @@ fig8.autofmt_xdate(rotation=45)  # rotate the x-axis labels for readability
 
 # Create the ninth plot
 fig9 = plt.figure()  # create a new figure
+fig9.subplots_adjust(bottom=0.2, left=0.2)
 ax9 = fig9.add_subplot(111)  # add a subplot to the figure
 fig9.autofmt_xdate(rotation=45)  # rotate the x-axis labels for readability
 # extract runs that occurred in March
 march_runs = runs[runs['start_date_local'].dt.month == 3]
 sns.regplot(x="start_time_hr_int", y="max_heartrate", data=march_runs).set_title(
     "Max Heart Rate vs Start Time (March)")  # plot the maximum heart rate versus the start time for March runs
+ax9.set_xlabel('Start Time (hour)')  # set the x-axis label
+ax9.set_ylabel('Max Heart Rate')  # set the y-axis label
 # print information about the run with the latest start time
 print(runs.loc[runs['start_time_unix'] == runs['start_time_unix'].max()])
 # print information about the run with the latest start time string
@@ -181,7 +203,22 @@ print(runs.loc[runs['start_time_str'] == runs['start_time_str'].max()])
 print(runs.loc[runs['start_time'] == runs['start_time'].max()])
 # sort the runs by the start date
 sorted_runs = runs.sort_values(by=['start_date_local'])
+
+# Create a new column for the week number
+runs['week_number'] = runs['start_date_local'].dt.isocalendar().week
+
+# Count the number of runs per week, starting on Mondays
+runs_per_week = runs.groupby(['start_date_local', 'week_number']).count()
+runs_per_week = runs_per_week['upload_id'].groupby('week_number').sum()
+
+
+# Create the eleventh plot
+fig11, ax11 = plt.subplots(figsize=(10, 6))
+ax11.plot(runs_per_week.index, runs_per_week.values)
+ax11.set_title('Number of Runs per Week in 2023')
+ax11.set_xlabel('Week #')
+ax11.set_ylabel('Number of Runs')
+fig11.autofmt_xdate(rotation=45)
+
+
 plt.show()  # display the plots in the figure
-
-
-print(plot)

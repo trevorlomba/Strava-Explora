@@ -23,6 +23,7 @@ The script then cleans and manipulates the data by converting the date column in
 
 Finally, the script plots the data in multiple graphs.
 
+
 ## Credits
 
 This project was created by Trevor Lomba (tjlomba95@gmail.com) as a personal project. Special thanks to Strava for providing the API and to the creators of the Python libraries used in this project.
