@@ -21,11 +21,12 @@ The ultimate goal of this project is to improve my overall fitness and health, w
 
 5. Run the strava_exploration.py script to analyze your Strava runs.
 
-![Pace over Time](https://user-images.githubusercontent.com/76894056/229618444-fc8c422b-0e5b-4373-a410-9640b5534326.png)
-![Cadence vs Distance](https://user-images.githubusercontent.com/76894056/229618498-8ade7bf4-42f7-47f2-8801-825fdb7c695e.png)
-![Suffer Score vs Distance](https://user-images.githubusercontent.com/76894056/229618544-219f5bb3-98d8-45df-97b6-0e03e4b96a2c.png)
-![Max HR vs Distance.png](https://github.com/trevorlomba/Strava-Explora/blob/main/visualizations/4.3.23%20Max%20HR%20vs%20Distance.png?raw=true)
-![Max HR vs Suffer Score.png](https://github.com/trevorlomba/Strava-Explora/blob/main/visualizations/4.3.23%20Max%20HR%20vs%20Suffer%20Score.png?raw=true)
+## Sample Visualizations of Personal Activity Data
+<img src="https://user-images.githubusercontent.com/76894056/229618444-fc8c422b-0e5b-4373-a410-9640b5534326.png" alt="Pace over Time" width="500"/>
+<img src="https://user-images.githubusercontent.com/76894056/229618498-8ade7bf4-42f7-47f2-8801-825fdb7c695e.png" alt="Cadence vs Distance" width="500"/>
+<img src="https://user-images.githubusercontent.com/76894056/229618544-219f5bb3-98d8-45df-97b6-0e03e4b96a2c.png" alt="Suffer Score vs Distance" width="500"/>
+<img src="https://github.com/trevorlomba/Strava-Explora/blob/main/visualizations/4.3.23%20Max%20HR%20vs%20Distance.png?raw=true" alt="Max HR vs Distance" width="500"/>
+<img src="https://github.com/trevorlomba/Strava-Explora/blob/main/visualizations/4.3.23%20Max%20HR%20vs%20Suffer%20Score.png?raw=true" alt="Max HR vs Suffer Score" width="500"/>
     
 ## Usage
 
