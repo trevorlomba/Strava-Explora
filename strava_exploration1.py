@@ -8,52 +8,15 @@ import seaborn as sns
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import matplotlib.ticker as ticker
 # Numpy will help us handle some work with arrays.
 import numpy as np
 # Datetime will allow Python to recognize dates as dates, not strings.
 from datetime import datetime
+import strava_cleaning
 import strava_api
 
-activities = json_normalize(strava_api.my_dataset)
-print (activities.columns) #See a list of all columns in the table
-print (activities.shape) #See the dimensions of the table.
-
-print (activities['start_date_local'])
-
-# Create new dataframe with only columns I care about
-cols = ['name',
-        'average_speed', 'suffer_score', 'upload_id', 'type', 'distance', 'moving_time', 'max_speed', 'total_elevation_gain',
-        'start_date_local', 'average_heartrate', 'max_heartrate', 'workout_type', 'elapsed_time', 'average_cadence'
-        ]
-activities = activities[cols]  # Break date into start time and date
-activities['start_date_local'] = pd.to_datetime(activities['start_date_local'])
-activities['start_time'] = activities['start_date_local'].dt.time
-
-
-# activities['start_time'] = activities['start_date_local'].dt.time.apply(
-    # lambda x: x.strftime('%H:%M:%S'))
-activities['start_date_local'] = activities['start_date_local'].dt.date
-activities.head(5)
-
-print(activities.head(5))
-
-activities['start_date_local'] = pd.to_datetime(activities['start_date_local'])
-#runs = activities.loc[activities['type'] == 'Run' & activities['start_date_local'].dt.year == 2023]
-runs = activities.loc[(activities['type'] == 'Run') & (activities['start_date_local'].dt.year == 2023)]
-runs['distance'] = runs['distance'] * 0.000621371
-runs['pace'] = (runs['moving_time'] / 60) / (runs['distance'])
-runs['cadence'] = (runs['average_cadence'] * 2)
-# runs["start_time"] = pd.to_datetime(runs["start_time"])
-runs['start_time_unix'] = runs['start_date_local'].apply(
-    lambda x: x.timestamp())
-runs['start_time_unix'] = runs['start_date_local'].apply(
-    lambda x: x.timestamp())
-runs['start_time_str'] = runs['start_time'].apply(
-    lambda x: x.strftime('%H:%M:%S'))
-runs['start_time_hr_str'] = runs['start_time_str'].str[:2]
-runs['start_time_hr_int'] = runs['start_time_hr_str'].apply(lambda x: int(x))
-
-
+runs = strava_cleaning.runs
 
 # runs['pace'] = 60 / runs['average_speed']
 # runs.loc[:, 'pace'] = 60 / runs.loc[:, 'average_speed']
@@ -220,5 +183,118 @@ ax11.set_xlabel('Week #')
 ax11.set_ylabel('Number of Runs')
 fig11.autofmt_xdate(rotation=45)
 
+# Create the figure and axis for the first plot
+fig12, ax12 = plt.subplots(figsize=(10, 6))
+
+# Plot the first bar chart
+runs.groupby('weekday').count()['moving_time'].plot.bar(ax=ax12)
+ax12.set_title('Number of Runs by Weekday')
+ax12.set_xlabel('Weekday')
+ax12.set_ylabel('Number of Runs')
+
+# Create the figure and axis for the second plot
+fig13, ax13 = plt.subplots(figsize=(10, 6))
+
+# Plot the second bar chart
+runs.groupby('weekday').mean()['moving_time'].plot.bar(ax=ax13)
+ax13.set_title('Average Moving Time by Weekday')
+ax13.set_xlabel('Weekday')
+ax13.set_ylabel('Moving Time (minutes)')
+
+# Create the figure and axis
+fig14, ax14 = plt.subplots(figsize=(10, 6))
+
+# Group the runs by week and calculate the total distance
+distance_by_week = runs.groupby(pd.Grouper(
+    key='start_date_local', freq='W'))['distance'].sum()
+
+
+# Round the values to the nearest 10th
+distance_by_week = distance_by_week
+
+# Calculate the moving average of the last two weeks, excluding the current week
+moving_avg = (distance_by_week[distance_by_week.count()-2] * 1.1)
+print (moving_avg)
+print(moving_avg * 1.1)
+# moving_avg = distance_by_week.rolling(window=2).apply(
+#     lambda x: x.head(1).mean()).round()
+
+# Calculate the value for the ticked line as 10% above the moving average
+ticked_line = moving_avg * 1.1
+
+ax14.bar(distance_by_week.index[distance_by_week.count(
+)-1], moving_avg.round(2), color='green', width=3.5, label='Goal')
+ax14.text(distance_by_week.index[distance_by_week.count(
+)-1], moving_avg.round(2) + 1, moving_avg.round(2), ha='center', color='green', fontsize=13)
+
+
+# Plot the bar chart and add labels
+for i, val in enumerate(distance_by_week.index):
+    ax14.bar(val, distance_by_week.values[i], width=5, color='blue')
+# for i, val in enumerate(range(1, len(distance_by_week)+1)):
+    # ax14.bar(i+1, distance_by_week.values[i], width=0.8, color='blue')
+    label = val  # Format date as first day of week
+    # Adjust y-position of label
+    ax14.text(val, distance_by_week.values[i] -1,
+              distance_by_week.values[i].round(2), ha='center', color='white', va='top', fontsize=12)
+
+# Plot the ticked line
+# ax14.axhline(y=ticked_line, linestyle='--', color='red', label='10% increase from moving average')
+
+# Set the title and axis labels
+ax14.set_title('Total Distance by Week', fontsize=24)
+ax14.set_xlabel('Week', fontsize=10)
+ax14.set_ylabel('Distance (miles)', fontsize=18)
+
+
+# Set y-axis limit with a buffer of 10%
+ax14.set_ylim(top=distance_by_week.max()*1.3)
+# ax14.set_xlim(distance_by_week.values[0], distance_by_week.values[-2])
+
+# Set the tick labels to be the start date of the week
+fig14.autofmt_xdate(rotation=45)
+
+# Set the maximum number of x-axis ticks to 10
+ax14.xaxis.set_major_locator(ticker.MaxNLocator(10))
+
+# Add a legend
+# ax14.legend()
+
+# Create the figure and axis
+fig15, ax15 = plt.subplots(figsize=(10, 6))
+
+# Group the runs by month and calculate the total distance
+distance_by_month = runs.groupby(pd.Grouper(key='start_date_local', freq='M'))[
+    'distance'].sum()
+
+# Round the values to the nearest 10th
+distance_by_month = distance_by_month.round(1)
+
+# Calculate the moving average of the last two months, excluding the current month
+moving_avg = distance_by_month.rolling(window=2).apply(
+    lambda x: x.head(1)).mean().round(1)
+
+# Calculate the value for the ticked line as 10% above the moving average
+ticked_line = distance_by_month[1] * 1.1
+
+# Plot the bar chart and add labels
+for i, val in enumerate(distance_by_month.values):
+    ax15.bar(distance_by_month.index[i], val, width=10)
+    ax15.text(i, val+5, str(val), ha='center')
+
+# Plot the ticked line
+ax15.axhline(y=ticked_line, linestyle='--', color='red',
+             label='10% increase from moving average')
+
+# Set the title and axis labels
+ax15.set_title('Total Distance by Month', fontsize=18)
+ax15.set_xlabel('Month', fontsize=18)
+ax15.set_ylabel('Distance (meters)', fontsize=18)
+
+# Add a legend
+# ax15.legend()
+
+# Set y-axis limit with a buffer of 10%
+ax15.set_ylim(top=distance_by_month.max()*1.2)
 
 plt.show()  # display the plots in the figure
