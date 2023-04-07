@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Mileage Report</title>
+<style>
+  body {
+    background-color: #282c34;
+    color: #ffffff;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  h1 {
+    font-size: 36px;
+    margin-top: 50px;
+  }
+
+  p {
+    font-size: 18px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  span {
+    font-size: 22px;
+    color: #fc4c02;
+    font-weight: bold;
+  }
+
+  .center {
+    margin: auto;
+    width: 50%;
+    padding: 10px;
+    border: 2px solid #fc4c02;
+  }
+
+  img {
+    display: block;
+    margin: auto;
+    width: 80%;
+    max-width: 800px;
+    border: 2px solid #6b758a
+  }
+</style>
+</head>
+
+<body>
+  <div class="center">
+    <div class="container">
+      <h1>Mileage Report</h1>
+      {% if week_prog < (next_week_goal - 5) %} <p>Great job on completing <span>{{ week_prog }}</span> miles this week,
+        keep pushing hard and don't give up now! You're making fantastic progress towards your goal of <span>{{
+          next_week_goal }}</span> miles by the end of the week. </p>
+        {% elif week_prog >= (next_week_goal - 5) and week_prog < next_week_goal %} <p>Awesome work on running <span>{{
+            week_prog }}</span> miles this week, you're getting so close to your goal of <span>{{ next_week_goal
+            }}</span> miles. Keep up the momentum and you'll hit your goal in no time! </p>
+          {% else %}
+          <p>Great job on running <span>{{ week_prog }}</span> miles this week! You've surpassed your goal of <span>{{
+              next_week_goal }}</span> miles, way to go! Remember to take a rest day or two to let your body recover and
+            prevent injury, and get back to training soon to keep pushing towards your goals. </p>
+          {% endif %}
+          <img src="visualizations/Total Distance by Week.png" alt="Total Distance by Week">
+          <p>Remember, it's important to continue increasing your mileage each week by no more than 10% to prevent
+            injury and safely build endurance. Let's keep pushing towards that finish line together!</p>
+            <img src="visualizations/Total Distance by Day.png" alt="Total Distance by Day">
+
+          {% if days_zero_last_3 >= 2 %}
+          <p>It looks like you've taken {{ days_zero_last_3 }} rest day(s) in the last 3 days. While rest is important,
+            be sure to keep pushing towards your goals and stay motivated to keep running consistently.</p>
+        {% elif days_zero_last_14 < 2 %} <p>Great job on taking care of your body with adequate rest. You've only
+          taken {{ days_zero_last_14 }} rest day(s) in the last 14 days, but don't forget to prioritize recovery! Consider
+          taking another day off soon to ensure you're giving your body the rest it needs to perform at its best without risking injury.</p>
+          {% else %}
+            <p>Way to be consistent with your training and recovery! You've taken {{ days_zero_last_14 }}
+              rest day(s) in the last 14 days, and only {{ days_zero_last_3 }} rest day(s) in the last 3 days (including today). Keep up
+              the great work!</p>
+            {% endif %}
+
+    </div>
+  </div>
+</body>
+
+</html>

@@ -1,4 +1,5 @@
 # Pandas will be the backbone of our data manipulation.
+import pytz
 import pandas as pd 
 from pandas import json_normalize
 # Seaborn is a data visualization library.
@@ -6,6 +7,7 @@ import seaborn as sns
 # Matplotlib is a data visualization library.
 # Seaborn is actually built on top of Matplotlib.
 import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import matplotlib.ticker as ticker
@@ -15,6 +17,9 @@ import numpy as np
 from datetime import datetime
 import strava_cleaning
 import strava_api
+import jinja2
+import os
+import pytz
 
 runs = strava_cleaning.runs
 
@@ -57,6 +62,10 @@ p = np.poly1d(z)
 plt.plot(x, p(x2), 'r--')
 # format the figure and display
 fig.autofmt_xdate(rotation=45)
+title = ax1.get_title()
+filename = f"{title}.png"
+plt.savefig(f"visualizations/{filename}")
+
 
 # Create the tenth plot
 fig10 = plt.figure(figsize=(10, 6))  # create overall container
@@ -75,6 +84,10 @@ p = np.poly1d(z)
 plt.plot(x, p(x2), 'r--')
 # format the figure and display
 fig10.autofmt_xdate(rotation=45)
+title = ax10.get_title()
+filename = f"{title}.png"
+plt.savefig(f"visualizations/{filename}")
+
 
 # Create a second plot
 fig2 = plt.figure(figsize=(10, 6))
@@ -92,6 +105,10 @@ sns.regplot(x='average_heartrate', y='cadence', data=runs).set_title(
     "Average Heart Rate vs Cadence")
 ax3.set_xlabel('Average Heart Rate')
 ax3.set_ylabel('Cadence (steps/min)')
+title = ax3.get_title()
+filename = f"{title}.png"
+plt.savefig(f"visualizations/{filename}")
+
 
 # Create a fourth plot
 fig4 = plt.figure(figsize=(10, 6))
@@ -101,6 +118,9 @@ sns.regplot(x='distance', y='max_heartrate', data=runs).set_title(
     "Max Heart Rate vs Distance")
 ax4.set_xlabel('Distance (miles)')
 ax4.set_ylabel('Max Heart Rate')
+title = ax4.get_title()
+filename = f"{title}.png"
+plt.savefig(f"visualizations/{filename}")
 
 # Create a fifth plot
 fig5 = plt.figure(figsize=(10, 6))
@@ -110,6 +130,9 @@ sns.regplot(x='distance', y='suffer_score', data=runs).set_title(
     "Suffer Score vs Distance")
 ax5.set_xlabel('Distance (miles)')
 ax5.set_ylabel('Suffer Score')
+title = ax5.get_title()
+filename = f"{title}.png"
+plt.savefig(f"visualizations/{filename}")
 
 # Create a sixth plot
 fig6 = plt.figure(figsize=(10, 6))
@@ -119,6 +142,9 @@ sns.regplot(y='max_heartrate', x='suffer_score', data=runs).set_title(
     "Max Heart Rate vs Suffer Score")
 ax6.set_xlabel('Suffer Score')
 ax6.set_ylabel('Max Heart Rate')
+title = ax6.get_title()
+filename = f"{title}.png"
+plt.savefig(f"visualizations/{filename}")
 
 # Create a seventh plot
 fig7 = plt.figure(figsize=(10, 6))
@@ -129,6 +155,9 @@ sns.regplot(x="start_time_hr_int", y="max_heartrate", data=march_runs).set_title
     "Max Heart Rate vs Start Time (March)")
 ax7.set_xlabel('Start Time (hour of day)')
 ax7.set_ylabel('Max Heart Rate')
+title = ax7.get_title()
+filename = f"{title}.png"
+plt.savefig(f"visualizations/{filename}")
 
 # Create the eighth plot
 fig8 = plt.figure()  # create a new figure
@@ -146,6 +175,9 @@ z = np.polyfit(x2, y, 1)  # fit a linear trendline to the data
 p = np.poly1d(z)
 plt.plot(x, p(x2), 'r--')  # plot the trendline in red dashes
 fig8.autofmt_xdate(rotation=45)  # rotate the x-axis labels for readability
+title = ax8.get_title()
+filename = f"{title}.png"
+plt.savefig(f"visualizations/{filename}")
 
 # Create the ninth plot
 fig9 = plt.figure()  # create a new figure
@@ -158,6 +190,11 @@ sns.regplot(x="start_time_hr_int", y="max_heartrate", data=march_runs).set_title
     "Max Heart Rate vs Start Time (March)")  # plot the maximum heart rate versus the start time for March runs
 ax9.set_xlabel('Start Time (hour)')  # set the x-axis label
 ax9.set_ylabel('Max Heart Rate')  # set the y-axis label
+title = ax3.get_title()
+filename = f"{title}.png"
+plt.savefig(f"visualizations/{filename}")
+
+
 # print information about the run with the latest start time
 print(runs.loc[runs['start_time_unix'] == runs['start_time_unix'].max()])
 # print information about the run with the latest start time string
@@ -182,6 +219,9 @@ ax11.set_title('Number of Runs per Week in 2023')
 ax11.set_xlabel('Week #')
 ax11.set_ylabel('Number of Runs')
 fig11.autofmt_xdate(rotation=45)
+title = ax11.get_title()
+filename = f"{title}.png"
+plt.savefig(f"visualizations/{filename}")
 
 # Create the figure and axis for the first plot
 fig12, ax12 = plt.subplots(figsize=(10, 6))
@@ -191,6 +231,9 @@ runs.groupby('weekday').count()['moving_time'].plot.bar(ax=ax12)
 ax12.set_title('Number of Runs by Weekday')
 ax12.set_xlabel('Weekday')
 ax12.set_ylabel('Number of Runs')
+title = ax12.get_title()
+filename = f"{title}.png"
+plt.savefig(f"visualizations/{filename}")
 
 # Create the figure and axis for the second plot
 fig13, ax13 = plt.subplots(figsize=(10, 6))
@@ -200,6 +243,9 @@ runs.groupby('weekday').mean()['moving_time'].plot.bar(ax=ax13)
 ax13.set_title('Average Moving Time by Weekday')
 ax13.set_xlabel('Weekday')
 ax13.set_ylabel('Moving Time (minutes)')
+title = ax13.get_title()
+filename = f"{title}.png"
+plt.savefig(f"visualizations/{filename}")
 
 # Create the figure and axis
 fig14, ax14 = plt.subplots(figsize=(10, 6))
@@ -210,33 +256,33 @@ distance_by_week = runs.groupby(pd.Grouper(
 
 
 # Round the values to the nearest 10th
-distance_by_week = distance_by_week
+distance_by_week = distance_by_week.round(1)
 
 # Calculate the moving average of the last two weeks, excluding the current week
-moving_avg = (distance_by_week[distance_by_week.count()-2] * 1.1)
+moving_avg = (distance_by_week[distance_by_week.count()-2] * 1.1).round(2)
 print (moving_avg)
-print(moving_avg * 1.1)
 # moving_avg = distance_by_week.rolling(window=2).apply(
 #     lambda x: x.head(1).mean()).round()
-
-# Calculate the value for the ticked line as 10% above the moving average
-ticked_line = moving_avg * 1.1
+next_week_goal = distance_by_week.values[-2] * 1.1
+week_prog = distance_by_week.values[-1]
+miles_left = next_week_goal - week_prog
 
 ax14.bar(distance_by_week.index[distance_by_week.count(
-)-1], moving_avg.round(2), color='green', width=3.5, label='Goal')
+)-1], next_week_goal, color=(252/255, 76/255, 2/255), width=3.5, label='Goal')
 ax14.text(distance_by_week.index[distance_by_week.count(
-)-1], moving_avg.round(2) + 1, moving_avg.round(2), ha='center', color='green', fontsize=13)
+)-1], moving_avg.round(2) + 1, moving_avg, ha='center', color=(252/255, 76/255, 2/255), fontsize=15, fontweight='bold')
 
 
 # Plot the bar chart and add labels
 for i, val in enumerate(distance_by_week.index):
-    ax14.bar(val, distance_by_week.values[i], width=5, color='blue')
+    ax14.bar(val, distance_by_week.values[i], width=5, color=(
+        27/255, 117/255, 187/255))
 # for i, val in enumerate(range(1, len(distance_by_week)+1)):
     # ax14.bar(i+1, distance_by_week.values[i], width=0.8, color='blue')
     label = val  # Format date as first day of week
     # Adjust y-position of label
     ax14.text(val, distance_by_week.values[i] -1,
-              distance_by_week.values[i].round(2), ha='center', color='white', va='top', fontsize=12)
+              distance_by_week.values[i].round(1), ha='center', color='white', va='top', fontsize=12)
 
 # Plot the ticked line
 # ax14.axhline(y=ticked_line, linestyle='--', color='red', label='10% increase from moving average')
@@ -246,6 +292,8 @@ ax14.set_title('Total Distance by Week', fontsize=24)
 ax14.set_xlabel('Week', fontsize=10)
 ax14.set_ylabel('Distance (miles)', fontsize=18)
 
+# ax14.text(distance_by_week.index[1], (distance_by_week.max(
+# ) * 1.2), f'{miles_left} miles to go', ha='right',  color=(252/255, 76/255, 2/255), fontsize=14, alpha=0.5)
 
 # Set y-axis limit with a buffer of 10%
 ax14.set_ylim(top=distance_by_week.max()*1.3)
@@ -256,6 +304,9 @@ fig14.autofmt_xdate(rotation=45)
 
 # Set the maximum number of x-axis ticks to 10
 ax14.xaxis.set_major_locator(ticker.MaxNLocator(10))
+title = ax14.get_title()
+filename = f"{title}.png"
+plt.savefig(f"visualizations/{filename}")
 
 # Add a legend
 # ax14.legend()
@@ -296,5 +347,94 @@ ax15.set_ylabel('Distance (meters)', fontsize=18)
 
 # Set y-axis limit with a buffer of 10%
 ax15.set_ylim(top=distance_by_month.max()*1.2)
+title = ax15.get_title()
+filename = f"{title}.png"
+plt.savefig(f"visualizations/{filename}")
 
-plt.show()  # display the plots in the figure
+runs.loc[:, 'miles_left'] = miles_left
+runs.loc[:, 'moving_avg'] = moving_avg
+
+# Create the figure and axis
+fig16, ax16 = plt.subplots(figsize=(10, 6))
+
+now = pd.Timestamp.now().tz_localize(pytz.utc).tz_convert(None)
+
+# Get the data for the last 7 days
+last_7_days = runs[runs['start_date_local'].dt.tz_convert(None) >= now - pd.Timedelta(days=7)]
+
+# Set the date as the index
+last_7_days.set_index('start_date_local', inplace=True)
+
+# Get the data for the last 14 days
+last_14_days = runs[runs['start_date_local'].dt.tz_convert(
+    None) >= now - pd.Timedelta(days=14)]
+
+# Set the date as the index
+last_14_days.set_index('start_date_local', inplace=True)
+
+# Get the data for the last 3 days
+last_3_days = runs[runs['start_date_local'].dt.tz_convert(
+    None) >= now - pd.Timedelta(days=3)]
+
+# Set the date as the index
+last_3_days.set_index('start_date_local', inplace=True)
+
+
+# Group the runs by day and calculate the total distance
+distance_by_day = last_14_days.groupby(last_14_days.index.date)['distance'].sum()
+distance_by_day_last_3_days = last_3_days.groupby(
+    last_3_days.index.date)['distance'].sum()
+distance_by_day_last_7_days = last_7_days.groupby(
+    last_7_days.index.date)['distance'].sum()
+distance_by_day_last_14_days = last_14_days.groupby(
+    last_14_days.index.date)['distance'].sum()
+
+
+# Create a list of colors for the bars based on whether there is any distance or not
+colors = ['grey' if d != 0 else (27/255, 117/255, 187/255) for d in distance_by_day]
+
+
+
+# Plot the bar chart and add labels
+colors = [(27/255, 117/255, 187/255) if x > 0 else (240/255, 240/255, 240/255)
+          for x in distance_by_day_last_3_days.values]
+ax16.bar(distance_by_day.index,
+         distance_by_day, width=0.8, color=colors)
+
+
+# Set the title and axis labels
+ax16.set_title('Total Distance by Day', fontsize=18)
+ax16.set_xlabel('Date', fontsize=14)
+ax16.set_ylabel('Distance (miles)', fontsize=14)
+
+# Set y-axis limit with a buffer of 10%
+# ax16.set_ylim(top=distance_by_day.max()*1.2)
+
+# Set the tick labels to be the start date of the week
+fig16.autofmt_xdate(rotation=45)
+
+# Set the maximum number of x-axis ticks to 10
+# ax16.xaxis.set_major_locator(ticker.MaxNLocator(10))
+
+# Save the figure
+title = ax16.get_title()
+filename = f"{title}.png"
+plt.savefig(f"visualizations/{filename}")
+
+# count the number of days last week where the distance was 0
+days_zero_last_7 = 7 - distance_by_day_last_7_days.count()
+days_zero_last_14 = 14 - distance_by_day_last_14_days.count()
+days_zero_last_3 = 3 - distance_by_day_last_3_days.count()
+print('distance_by_day')
+print(distance_by_day)
+print('distance_by_day lst x days')
+print(distance_by_day_last_14_days)
+print(distance_by_day_last_7_days)
+print(distance_by_day_last_3_days)
+print('days zero')
+print(days_zero_last_14)
+print(days_zero_last_7)
+print(days_zero_last_3)
+
+
+# plt.show()  # display the plots in the figure
