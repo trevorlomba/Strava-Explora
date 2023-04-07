@@ -27,6 +27,9 @@ The ultimate goal of this project is to improve my overall fitness and health, w
 <img src="https://user-images.githubusercontent.com/76894056/229618544-219f5bb3-98d8-45df-97b6-0e03e4b96a2c.png" alt="Suffer Score vs Distance" width="500"/>
 <img src="https://github.com/trevorlomba/Strava-Explora/blob/main/visualizations/4.3.23%20Max%20HR%20vs%20Distance.png?raw=true" alt="Max HR vs Distance" width="500"/>
 <img src="https://github.com/trevorlomba/Strava-Explora/blob/main/visualizations/4.3.23%20Max%20HR%20vs%20Suffer%20Score.png?raw=true" alt="Max HR vs Suffer Score" width="500"/>
+<img src="https://github.com/trevorlomba/Strava-Explora/blob/main/visualizations/4.5.23%20Average%20Moving%20Time%20per%20Week.png?raw=true" alt="Max HR vs Suffer Score" width="500"/>
+<img src="https://github.com/trevorlomba/Strava-Explora/blob/main/visualizations/4.5.23%20Number%20of%20Runs%20per%20Weekday.png?raw=true" alt="Max HR vs Suffer Score" width="500"/>
+<img src="https://github.com/trevorlomba/Strava-Explora/blob/main/visualizations/4.5.23%20Total%20Distance%20by%20Week.png?raw=true" alt="Max HR vs Suffer Score" width="500"/>
     
 ## Usage
 
