@@ -6,6 +6,8 @@ As I collect more data over time, my plan is to expand on this project by incorp
 
 Using this data, my goal is to create a model that will allow me to gradually ramp up my mileage and effort over time in order to reduce the risk of injury. By analyzing the patterns and trends in my data, I will be able to determine the optimal amount of mileage and effort for each week, based on my current fitness level and the amount of stress and recovery I have experienced.
 
+Additionally, this project has been extended to create a report using Jinja2, a powerful templating engine for Python. The report provides an easy-to-read summary of the runner's progress towards their goals, as well as visualizations of their running data over time. By automating the report generation process, the runner can easily keep track of their progress and make adjustments to their training as needed. 
+
 The ultimate goal of this project is to improve my overall fitness and health, while reducing the risk of injury. With a data-driven approach to my training, I believe that I will be able to achieve these goals and reach my full potential as an athlete. As I continue to collect data and refine my model, I look forward to seeing the results and improving my overall fitness and well-being.
 
 ## Installation
@@ -22,14 +24,16 @@ The ultimate goal of this project is to improve my overall fitness and health, w
 5. Run the strava_exploration.py script to analyze your Strava runs.
 
 ## Sample Visualizations of Personal Activity Data
-<img src="https://user-images.githubusercontent.com/76894056/229618444-fc8c422b-0e5b-4373-a410-9640b5534326.png" alt="Pace over Time" width="500"/>
-<img src="https://user-images.githubusercontent.com/76894056/229618498-8ade7bf4-42f7-47f2-8801-825fdb7c695e.png" alt="Cadence vs Distance" width="500"/>
-<img src="https://user-images.githubusercontent.com/76894056/229618544-219f5bb3-98d8-45df-97b6-0e03e4b96a2c.png" alt="Suffer Score vs Distance" width="500"/>
-<img src="https://github.com/trevorlomba/Strava-Explora/blob/main/visualizations/4.3.23%20Max%20HR%20vs%20Distance.png?raw=true" alt="Max HR vs Distance" width="500"/>
-<img src="https://github.com/trevorlomba/Strava-Explora/blob/main/visualizations/4.3.23%20Max%20HR%20vs%20Suffer%20Score.png?raw=true" alt="Max HR vs Suffer Score" width="500"/>
-<img src="https://github.com/trevorlomba/Strava-Explora/blob/main/visualizations/4.5.23%20Average%20Moving%20Time%20per%20Week.png?raw=true" alt="Max HR vs Suffer Score" width="500"/>
-<img src="https://github.com/trevorlomba/Strava-Explora/blob/main/visualizations/4.5.23%20Number%20of%20Runs%20per%20Weekday.png?raw=true" alt="Max HR vs Suffer Score" width="500"/>
-<img src="https://github.com/trevorlomba/Strava-Explora/blob/main/visualizations/4.5.23%20Total%20Distance%20by%20Week.png?raw=true" alt="Max HR vs Suffer Score" width="500"/>
+<img src="visualizations/4.3.23 Pace over Time.png" alt="Pace over Time" width="500"/>
+<img src="visualizations/4.3.23 Pace vs Cadence.png" alt="Cadence vs Distance" width="500"/>
+<img src="visualizations/4.3.23 Suffer Score vs Distance.png" alt="Suffer Score vs Distance" width="500"/>
+<img src="visualizations/4.3.23 Max HR vs Distance.png" alt="Max HR vs Distance" width="500"/>
+<img src="visualizations/4.3.23 Max HR vs Suffer Score.png" alt="Max HR vs Suffer Score" width="500"/>
+<img src="visualizations/4.3.23 Max HR vs Suffer Score.png" alt="Max HR vs Suffer Score" width="500"/>
+<img src="visualizations/4.5.23 Average Moving Time per Week.png" alt="Average Moving Time Per Week" width="500"/>
+<img src="visualizations/4.5.23 Number of Runs per Weekday.png" alt="Number of Runs per Weekday.png" width="500"/>
+<img src="visualizations/4.5.23 Total Distance by Week.png" alt="Total Distance by Week.png width="500"/>
+
     
 ## Usage
 
