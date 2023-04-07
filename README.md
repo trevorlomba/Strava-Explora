@@ -24,7 +24,7 @@ The ultimate goal of this project is to improve my overall fitness and health, w
 5. Run the strava_exploration.py script to analyze your Strava runs.
 
 ## Sample Mileage Report Using Jinja Templating
-
+<img src="templates/4.7.23 Report Template.png" alt="Pace over Time" width="500"/>
 
 ## Sample Visualizations of Personal Activity Data
 <img src="visualizations/4.3.23 Pace over Time.png" alt="Pace over Time" width="500"/>
