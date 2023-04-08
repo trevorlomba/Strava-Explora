@@ -2,83 +2,193 @@
 <html>
 
 <head>
-  <title>Mileage Report</title>
+  <title>Running Report by Trevor Lomba</title>
+    <link rel="icon" href="favicon.ico">
 <style>
-  body {
-    background-color: #282c34;
-    color: #ffffff;
-    text-align: center;
-    font-family: Arial, Helvetica, sans-serif;
+  /* default styles */
+body {
+  background-color: #0078c25b;
+  color: #ffffff;
+  text-align: center;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+h1 {
+  font-size: 40px;
+  margin-top: 1vh;
+  color: #fc4c02; /* set text color */
+}
+
+h2 {
+  font-size: 2rem; /* adjust font size as needed */
+  font-weight: bold; /* make text bold */
+  margin-top: 1rem; /* add margin to top to create space */
+}
+
+p {
+  font-size: 18px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+span {
+  font-size: 22px;
+  color: #fc4c02;
+  font-weight: bold;
+}
+
+.center {
+  margin: auto;
+  width: 50%;
+  padding: 30px;
+  border: 2px solid #fc4c02;
+  border-radius: 10px;
+  background-color: #282c34;
+  margin-bottom: 10vh;
+}
+
+img {
+  display: block;
+  margin: auto;
+  width: 80%;
+  max-width: 800px;
+  border: 2px solid #6b758a;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  /* padding-bottom: 1px;
+  padding-top: 1px; */
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: #282c34;
+  color: #ffffff;
+  text-align: center;
+  font-family: Arial, Helvetica, sans-serif;
+  border-top: 2px solid #0078c2;
+
   }
 
-  h1 {
-    font-size: 36px;
-    margin-top: 50px;
-  }
+.footer > p {
+  font-size: 1rem;
+  /* line-height: 1; */
+}
 
-  p {
-    font-size: 18px;
-    margin-bottom: 20px;
-    line-height: 1.5;
-  }
 
-  span {
-    font-size: 22px;
-    color: #fc4c02;
-    font-weight: bold;
-  }
+.footer a:link {
+  color: #fc4c02; /* set link color for unclicked state */
+}
 
+.footer a:visited {
+  color: #0077c2; /* set link color for clicked state */
+}
+
+/* responsive styles */
+@media screen and (max-width: 768px) {
   .center {
-    margin: auto;
-    width: 50%;
+    width: 80%;
+    padding: 20px;
+    border-radius: 5px;
+  }
+  
+  img {
+    width: 90%;
+    max-width: 500px;
+    border-width: 1px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .center {
+    width: 90%;
     padding: 10px;
-    border: 2px solid #fc4c02;
+    border-radius: 2px;
   }
 
   img {
-    display: block;
-    margin: auto;
-    width: 80%;
-    max-width: 800px;
-    border: 2px solid #6b758a
+    width: 100%;
+    max-width: 300px;
+    border-width: 1px;
   }
+  .footer > p {
+  font-size: .8rem;
+  line-height: .8rem;
+}
+}
+
 </style>
 </head>
 
 <body>
   <div class="center">
     <div class="container">
-      <h1>Mileage Report</h1>
-      {% if week_prog < (next_week_goal - 5) %} <p>Great job on completing <span>{{ week_prog }}</span> miles this week,
-        keep pushing hard and don't give up now! You're making fantastic progress towards your goal of <span>{{
-          next_week_goal }}</span> miles by the end of the week. </p>
-        {% elif week_prog >= (next_week_goal - 5) and week_prog < next_week_goal %} <p>Awesome work on running <span>{{
-            week_prog }}</span> miles this week, you're getting so close to your goal of <span>{{ next_week_goal
-            }}</span> miles. Keep up the momentum and you'll hit your goal in no time! </p>
+      <h1>Progress Update for TJ</h1>
+      <h2>Mileage Report</h2>
+      {% if week_prog < (next_week_goal - 5) %} <p>Well done on achieving <span>{{ week_prog }}</span> miles this week,
+        keep striving and don't give up! You're making impressive progress towards your goal of <span>{{
+          next_week_goal }}</span> miles by the end of the week. Only <span>{{miles_left}}</span> miles to go!</p>
+        {% elif week_prog >= (next_week_goal - 5) and week_prog < next_week_goal %} <p>Excellent effort on covering
+          <span>{{
+            week_prog }}</span> miles this week, you're nearing your goal of <span>{{ next_week_goal
+            }}</span> miles. Maintain the momentum and you'll reach your goal in just <span>{{miles_left}}</span> more
+          miles! </p>
           {% else %}
-          <p>Great job on running <span>{{ week_prog }}</span> miles this week! You've surpassed your goal of <span>{{
-              next_week_goal }}</span> miles, way to go! Remember to take a rest day or two to let your body recover and
-            prevent injury, and get back to training soon to keep pushing towards your goals. </p>
+          <p>Great job on covering <span>{{ week_prog }}</span> miles this week! You've exceeded your goal of <span>{{
+              next_week_goal }}</span> miles, way to go! Remember to take a rest day or two for recovery and
+            injury prevention, and resume training soon to keep working towards your objectives. </p>
           {% endif %}
           <img src="visualizations/Total Distance by Week.png" alt="Total Distance by Week">
-          <p>Remember, it's important to continue increasing your mileage each week by no more than 10% to prevent
-            injury and safely build endurance. Let's keep pushing towards that finish line together!</p>
-            <img src="visualizations/Total Distance by Day.png" alt="Total Distance by Day">
-
+          <p>Keep in mind, it's crucial to gradually increase your mileage each week by no more than 10% for injury
+            prevention and safe endurance building. Let's keep working towards that finish line together!</p>
+          <img src="visualizations/Moving Time by Day.png" alt="Moving Time by Day">
           {% if days_zero_last_3 >= 2 %}
-          <p>It looks like you've taken {{ days_zero_last_3 }} rest day(s) in the last 3 days. While rest is important,
-            be sure to keep pushing towards your goals and stay motivated to keep running consistently.</p>
-        {% elif days_zero_last_14 < 2 %} <p>Great job on taking care of your body with adequate rest. You've only
-          taken {{ days_zero_last_14 }} rest day(s) in the last 14 days, but don't forget to prioritize recovery! Consider
-          taking another day off soon to ensure you're giving your body the rest it needs to perform at its best without risking injury.</p>
-          {% else %}
-            <p>Way to be consistent with your training and recovery! You've taken {{ days_zero_last_14 }}
-              rest day(s) in the last 14 days, and only {{ days_zero_last_3 }} rest day(s) in the last 3 days (including today). Keep up
-              the great work!</p>
+          <p>You've taken {{ days_zero_last_3 }} rest day(s) in the last 3 days. While rest is essential,
+            remember to stay focused on your goals and maintain consistent running habits.</p>
+          {% elif days_zero_last_14 < 2 %} <p>Nice work on providing your body with adequate rest. You've only
+            taken {{ days_zero_last_14 }} rest day(s) in the last 14 days, but don't neglect recovery! Consider
+            taking another day off soon to ensure your body gets the rest it needs to perform optimally without risking
+            injury.</p>
+            {% else %}
+            <p>Way to go on balancing your training and recovery! You've taken {{ days_zero_last_14 }}
+              rest day(s) in the last 14 days, and just {{ days_zero_last_3 }} rest day(s) in the last 3 days (including
+              today). Keep up
+              the excellent work!</p>
             {% endif %}
-
-    </div>
-  </div>
-</body>
+            <h2>Cadence Report</h2>
+            {% if average_cadence < 167 %} <p>Your last run's average cadence was <span>{{ average_cadence }}/min</span>,
+              falling below the optimal range of 170-180. Focus on raising your cadence to enhance your running form and
+              avoid overstriding.</p>
+              {% elif average_cadence >= 167 and average_cadence <= 182 %} <p>Superb job on maintaining an average cadence of
+                <span>{{ average_cadence }}/min</span> on your last run! Keep up the excellent work and continue to concentrate on
+                proper
+                running form.</p>
+                {% else %}
+                <p>Your last run's average cadence was <span>{{ average_cadence }}/min</span>, which is above the optimal
+                  range of 170-180. Be cautious not to overstride and concentrate on proper running form to prevent injury.
+                </p>
+                {% endif %}
+            <div style="display:flex; justify-content: center;">
+              <div style="flex: 1; margin-right: 5px;">
+                <img src="visualizations/Average Pace vs Average Cadence.png" alt="visualizations/Average Pace vs Cadence.png"
+                  style="width: 100%;">
+              </div>
+              <div style="flex: 1; margin-left: 5px;">
+                <img src="visualizations/Average Heartrate vs Average Cadence.png" alt="Average Heartrate vs Average Cadence"
+                  style="width: 100%;">
+              </div>
+            </div>
+            <p>We've discovered a significant positive correlation (r-squared = {{pace_vs_cadence_r2}}) between cadence and speed
+              (as pace), and no notable correlation between your average heart rate and the cadence at which you complete your runs
+              (r-squared = {{heartrate_vs_cadence_r2}}).</p>
+                </div>
+                <div class="footer">
+                  <p>Development and analysis by Trevor "TJ" Lomba. <a href="https://www.linkedin.com/in/trevorlomba/">Let's get in
+                      touch!</a>
+                  </p>
+                </div>
+                </body>
 
 </html>

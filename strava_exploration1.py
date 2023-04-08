@@ -1,4 +1,5 @@
 # Pandas will be the backbone of our data manipulation.
+import statsmodels.api as sm
 import pytz
 import pandas as pd 
 from pandas import json_normalize
@@ -109,6 +110,52 @@ title = ax3.get_title()
 filename = f"{title}.png"
 plt.savefig(f"visualizations/{filename}")
 
+# create the seventeenth plot
+fig17 = plt.figure(figsize=(10, 6))
+fig17.subplots_adjust(bottom=0.2, left=0.1)
+ax17 = fig17.add_subplot(111)
+sns.regplot(x='pace', y='cadence', data=runs, ax=ax17, color=(
+    27/255, 117/255, 187/255)).set_title(
+    "Average Pace vs Average Cadence", fontsize=26)
+ax17.set_xlabel('Average Pace (min/mile)')
+ax17.set_ylabel('Average Cadence (spm)')
+
+# add R-squared value if significant
+model = sm.OLS.from_formula('cadence ~ pace', data=runs)
+results = model.fit()
+r_squared = results.rsquared
+pace_vs_cadence_r2 = r_squared
+if r_squared > 0.1:
+    ax17.annotate(f"R-squared = {r_squared:.2f}",
+                  xy=(0.5, 0.9), xycoords='axes fraction')
+
+title = ax17.get_title()
+filename = f"{title}.png"
+plt.savefig(f"visualizations/{filename}")
+
+
+# create the eighteenth plot
+fig18 = plt.figure(figsize=(10, 6))
+fig18.subplots_adjust(bottom=0.2, left=0.1)
+ax18 = fig18.add_subplot(111)
+sns.regplot(x='cadence', y='average_heartrate', data=runs, ax=ax18, color=(
+    27/255, 117/255, 187/255)).set_title(
+    "Average Heartrate vs Average Cadence", fontsize=26)
+ax18.set_xlabel('Average Heartrate (bpm)')
+ax18.set_ylabel('Average Cadence (spm)')
+
+# add R-squared value if significant
+model = sm.OLS.from_formula('average_heartrate ~ cadence', data=runs)
+results = model.fit()
+r_squared = results.rsquared
+heartrate_vs_cadence_r2 = r_squared
+if r_squared > 0.1:
+    ax18.annotate(f"R-squared = {r_squared:.2f}",
+                  xy=(0.9, 0.9), xycoords='axes fraction')
+
+title = ax18.get_title()
+filename = f"{title}.png"
+plt.savefig(f"visualizations/{filename}")
 
 # Create a fourth plot
 fig4 = plt.figure(figsize=(10, 6))
@@ -303,7 +350,8 @@ ax14.set_ylim(top=distance_by_week.max()*1.3)
 fig14.autofmt_xdate(rotation=45)
 
 # Set the maximum number of x-axis ticks to 10
-ax14.xaxis.set_major_locator(ticker.MaxNLocator(10))
+ax14.xaxis.set_major_locator(ticker.MultipleLocator(7))
+
 title = ax14.get_title()
 filename = f"{title}.png"
 plt.savefig(f"visualizations/{filename}")
@@ -382,12 +430,19 @@ last_3_days.set_index('start_date_local', inplace=True)
 
 # Group the runs by day and calculate the total distance
 distance_by_day = last_14_days.groupby(last_14_days.index.date)['distance'].sum()
+moving_time_by_day = last_14_days.groupby(last_14_days.index.date)['moving_time'].sum()
 distance_by_day_last_3_days = last_3_days.groupby(
     last_3_days.index.date)['distance'].sum()
 distance_by_day_last_7_days = last_7_days.groupby(
     last_7_days.index.date)['distance'].sum()
 distance_by_day_last_14_days = last_14_days.groupby(
     last_14_days.index.date)['distance'].sum()
+moving_time_by_day_last_3_days = last_3_days.groupby(
+    last_3_days.index.date)['moving_time'].sum()
+moving_time_by_day_last_7_days = last_7_days.groupby(
+    last_7_days.index.date)['moving_time'].sum()
+moving_time_by_day_last_14_days = last_14_days.groupby(
+    last_14_days.index.date)['moving_time'].sum()
 
 
 # Create a list of colors for the bars based on whether there is any distance or not
@@ -398,14 +453,16 @@ colors = ['grey' if d != 0 else (27/255, 117/255, 187/255) for d in distance_by_
 # Plot the bar chart and add labels
 colors = [(27/255, 117/255, 187/255) if x > 0 else (240/255, 240/255, 240/255)
           for x in distance_by_day_last_3_days.values]
-ax16.bar(distance_by_day.index,
-         distance_by_day, width=0.8, color=colors)
+ax16.bar(moving_time_by_day.index,
+         moving_time_by_day, width=0.8, color=colors)
 
 
 # Set the title and axis labels
-ax16.set_title('Total Distance by Day', fontsize=18)
+ax16.set_title('Moving Time by Day', fontsize=18)
 ax16.set_xlabel('Date', fontsize=14)
-ax16.set_ylabel('Distance (miles)', fontsize=14)
+ax16.set_ylabel('Time (seconds)', fontsize=14)
+ax16.xaxis.set_major_locator(ticker.MultipleLocator())
+
 
 # Set y-axis limit with a buffer of 10%
 # ax16.set_ylim(top=distance_by_day.max()*1.2)
@@ -422,19 +479,23 @@ filename = f"{title}.png"
 plt.savefig(f"visualizations/{filename}")
 
 # count the number of days last week where the distance was 0
-days_zero_last_7 = 7 - distance_by_day_last_7_days.count()
-days_zero_last_14 = 14 - distance_by_day_last_14_days.count()
-days_zero_last_3 = 3 - distance_by_day_last_3_days.count()
-print('distance_by_day')
-print(distance_by_day)
-print('distance_by_day lst x days')
-print(distance_by_day_last_14_days)
-print(distance_by_day_last_7_days)
-print(distance_by_day_last_3_days)
+days_zero_last_7 = 7 - moving_time_by_day_last_7_days.count()
+days_zero_last_14 = 14 - moving_time_by_day_last_14_days.count()
+days_zero_last_3 = 3 - moving_time_by_day_last_3_days.count()
+print('moving_time_by_day')
+print(moving_time_by_day)
+print('moving_time_by_day lst x days')
+print(moving_time_by_day_last_14_days)
+print(moving_time_by_day_last_7_days)
+print(moving_time_by_day_last_3_days)
 print('days zero')
 print(days_zero_last_14)
 print(days_zero_last_7)
 print(days_zero_last_3)
 
+y = np.asarray(runs.cadence)
+last_run_average_cadence = y[0]
+
+print(last_run_average_cadence)
 
 # plt.show()  # display the plots in the figure
