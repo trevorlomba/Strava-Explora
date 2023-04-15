@@ -432,7 +432,7 @@ def get_cadence_report_data():
         "Average Heartrate per Mile vs Average Cadence", fontsize=26)
 
     # Set font size and alignment of x and y labels
-    ax18.set_xlabel('Average Heartrate per Mile (bpm/mile)',
+    ax18.set_xlabel('Average Heartrate per Mile (bpm)',
                     fontsize=18, labelpad=18, ha='center')
     ax18.set_ylabel('Average Cadence (spm)', fontsize=18,
                     labelpad=18,  va='center')
