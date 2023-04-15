@@ -31,5 +31,5 @@ header = {'Authorization': 'Bearer ' + access_token}
 param = {'per_page': 200, 'page': 1}
 my_dataset = requests.get(activites_url, headers=header, params=param).json()
 
-print(my_dataset[0]["name"])
-print(my_dataset[0]["map"]["summary_polyline"])
+# print(my_dataset[0]["name"])
+# print(my_dataset[0]["map"]["summary_polyline"])
