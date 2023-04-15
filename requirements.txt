@@ -83,7 +83,6 @@ pycparser==2.21
 Pygments==2.14.0
 pylint==2.14.5
 pyobjc==8.5
-pyobjc-core==8.5
 pyobjc-framework-Accessibility==8.5
 pyobjc-framework-Accounts==8.5
 pyobjc-framework-AddressBook==8.5
