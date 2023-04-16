@@ -202,17 +202,18 @@ def get_mileage_report_data():
 
 
     def get_last_week_data(today):
-        days_since_sunday = (today.isoweekday() % 7)
-        # print('days since sunday')
-        # print(days_since_sunday)
+        days_since_sunday = (today.isoweekday() % 7) or 7
+
+        print('days since sunday')
+        print(days_since_sunday)
 
         # Calculate the start and end dates for the last week
         end_date_last_week = (today - pd.DateOffset(days=days_since_sunday)).replace(hour=23, minute=59, second=59, microsecond=0)
-        # print('end date last week')
-        # print(end_date_last_week)
+        print('end date last week')
+        print(end_date_last_week)
         start_date_last_week = end_date_last_week - pd.DateOffset(days=6)
-        # print('start date last week')
-        # print(start_date_last_week)
+        print('start date last week')
+        print(start_date_last_week)
 
         return runs[(runs['start_date_local'].dt.tz_convert(None) >= start_date_last_week) &
                     (runs['start_date_local'].dt.tz_convert(None) <= end_date_last_week)].copy()
