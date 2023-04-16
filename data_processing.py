@@ -101,7 +101,22 @@ def get_mileage_report_data():
     # Round the values to the nearest 10th
     distance_by_week = distance_by_week.round(1)
     last_week_actual = distance_by_week.values[-2]
-    next_week_goal = distance_by_week.values[-2] * 1.1
+    previous_week = distance_by_week[-2]
+
+
+    week_before_previous = distance_by_week[-3] if len(
+        distance_by_week) >= 3 else 0
+    
+    two_weeks_before_previous = distance_by_week[-4] if len(
+        distance_by_week) >= 4 else 0
+    
+    three_weeks_before_previous = distance_by_week[-5] if len(
+        distance_by_week) >= 5 else 0
+
+    highest_value = max(previous_week, week_before_previous,
+                        two_weeks_before_previous, three_weeks_before_previous)
+    next_week_goal = highest_value * 1.1
+
     week_prog = distance_by_week.values[-1]
     miles_left = next_week_goal - week_prog
 
