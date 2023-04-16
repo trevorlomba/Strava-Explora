@@ -238,7 +238,7 @@ def get_mileage_report_data():
     last_week_data = get_last_week_data(today)
 
     # Find the longest run in the last week ending on the day before the first day of this week
-    longest_run_last_week = last_week_data['distance'].max()
+    longest_run_last_2_weeks = last_15_days['distance'].max()
 
     def days_left_in_week(today):
         today_weekday = today.isoweekday()
@@ -257,13 +257,13 @@ def get_mileage_report_data():
         longest_run_since_monday = 0
 
     # Check if the longest run in the last week was above last week's long run
-    long_run_improved = longest_run_since_monday > longest_run_last_week
+    long_run_improved = longest_run_since_monday > longest_run_last_2_weeks
 
     # Calculate the average miles left to run this week
     avg_miles_left = miles_left / days_left
 
     # Calculate the goal long run
-    goal_long_run = longest_run_last_week * 1.1
+    goal_long_run = longest_run_last_2_weeks * 1.1
 
     # Days left minus this weeks long run
     if not long_run_improved:
@@ -282,7 +282,7 @@ def get_mileage_report_data():
     # print("Miles left to run this week:", miles_left)
     # print("Average miles left to run this week:", avg_miles_left)
     # print("Longest run since Monday:", longest_run_since_monday)
-    # print("Longest last week:", longest_run_last_week)
+    # print("Longest last week:", longest_run_last_2_weeks)
     # print("Long run improved:", long_run_improved)
     # print(f"Goal long run (10% more than the longest last week): {goal_long_run:.2f}")
     # print("Miles left minus long run goal:", miles_left_minus_long_run_goal)
@@ -376,7 +376,7 @@ def get_mileage_report_data():
     # print('moving_time_by_day_plot:', moving_time_by_day_plot)
     # print('days_left:', days_left)
     # print('avg_miles_left:', avg_miles_left)
-    # print('longest_run_last_week:', longest_run_last_week)
+    # print('longest_run_last_2_weeks:', longest_run_last_2_weeks)
     # print('longest_run_since_monday:', longest_run_since_monday)
     # print('goal_long_run:', goal_long_run)
     # print('long_run_improved:', long_run_improved)
@@ -398,7 +398,7 @@ def get_mileage_report_data():
         'moving_time_by_day_plot': moving_time_by_day_plot,
         'days_left': days_left,
         'avg_miles_left': avg_miles_left,
-        'longest_run_last_week': longest_run_last_week,
+        'longest_run_last_2_weeks': longest_run_last_2_weeks,
         'goal_long_run': goal_long_run,
         'longest_run_since_monday': longest_run_since_monday,
         'long_run_improved': str(long_run_improved),
