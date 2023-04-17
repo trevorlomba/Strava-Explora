@@ -117,6 +117,18 @@ def get_mileage_report_data():
                         two_weeks_before_previous, three_weeks_before_previous)
     next_week_goal = highest_value * 1.1
 
+    # print distances by weeks
+    print('here are the distances by week')
+    # print(distance_by_week)
+    print('here are the distances by week')
+    print(distance_by_week)
+    print('here are the distances by week before previous')
+    print(week_before_previous)
+    print('here are the distances by week before previous')
+    print(two_weeks_before_previous)
+    print(three_weeks_before_previous)
+    print(highest_value)
+
     week_prog = distance_by_week.values[-1]
     miles_left = next_week_goal - week_prog
 
@@ -355,7 +367,7 @@ def get_mileage_report_data():
     if longest_run_since_monday is None or math.isnan(longest_run_since_monday):
         longest_run_since_monday = float(0)
         week_prog = float(0)
-        next_week_goal = next_week_goal * 1.1
+        # next_week_goal = next_week_goal * 1.1
         miles_left = next_week_goal
         avg_miles_left = miles_left / days_left
         long_run_improved = 'False'
