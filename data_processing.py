@@ -129,7 +129,12 @@ def get_mileage_report_data():
     print(three_weeks_before_previous)
     print(highest_value)
 
+    print('here are the distances by week')
+    print(distance_by_week.values[-1])
+    print(distance_by_week.values)
     week_prog = distance_by_week.values[-1]
+    print('here is the week prog')
+    print(week_prog)
     miles_left = next_week_goal - week_prog
 
 
@@ -262,14 +267,39 @@ def get_mileage_report_data():
     # Calculate the number of miles left to run this week
     miles_left = next_week_goal - week_prog
 
-    # Find the longest run in the 7 week
+
+    # Get today's date
+    today = pd.Timestamp.now().normalize()
+
+    # Calculate the days left in the week (days until next Monday)
+    days_left = (today.weekday() - 0) % 7
+    
+    #if days_left zero, then it is monday, so set to 7
+    if days_left == 0:
+        days_left = 7
+
+    # Find the most recent Monday
+    most_recent_monday = today - pd.Timedelta(days=days_left)
+
+    # Filter the runs since the most recent Monday including today
+    runs_since_monday = runs[(runs['start_date_local'].dt.tz_convert(
+        None) >= most_recent_monday) & (runs['start_date_local'].dt.tz_convert(None) <= today)]
+
+    # Find the longest run since the most recent Monday including today
+    longest_run_since_monday = runs_since_monday['distance'].max()
+
+    print("The longest run since the most recent Monday including today is:",
+        longest_run_since_monday)
+
+    # Find the longest run since Monday including today and the most recent monday
     longest_run_since_monday = runs[(runs['start_date_local'].dt.tz_convert(None) >= today - pd.Timedelta(days=7 - days_left))]['distance'].max()
+
     # If there was no run since monday, set the longest run to 0
     if not longest_run_since_monday:
         longest_run_since_monday = 0
 
     # Check if the longest run in the last week was above last week's long run
-    long_run_improved = longest_run_since_monday > longest_run_last_2_weeks
+    long_run_improved = longest_run_since_monday == longest_run_last_2_weeks
 
     # Calculate the average miles left to run this week
     avg_miles_left = miles_left / days_left
@@ -366,7 +396,6 @@ def get_mileage_report_data():
     # if no runs since monday, set longest run since monday to 0
     if longest_run_since_monday is None or math.isnan(longest_run_since_monday):
         longest_run_since_monday = float(0)
-        week_prog = float(0)
         # next_week_goal = next_week_goal * 1.1
         miles_left = next_week_goal
         avg_miles_left = miles_left / days_left
@@ -395,7 +424,7 @@ def get_mileage_report_data():
     # print('miles_left_minus_long_run_goal:', miles_left_minus_long_run_goal)
     # print('days_left_minus_long_run:', days_left_minus_long_run)
 
-    
+    print(week_prog)
 
 
     return {
