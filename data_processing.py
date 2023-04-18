@@ -272,11 +272,12 @@ def get_mileage_report_data():
     today = pd.Timestamp.now().normalize()
 
     # Calculate the days left in the week (days until next Monday)
-    days_left = (today.weekday() - 0) % 7
-    
-    #if days_left zero, then it is monday, so set to 7
+    days_left = (7 - today.weekday()) % 7
+
+    # if days_left is zero, then it is Monday, so set to 7
     if days_left == 0:
         days_left = 7
+
 
     # Find the most recent Monday
     most_recent_monday = today - pd.Timedelta(days=days_left)
