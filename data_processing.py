@@ -19,7 +19,11 @@ import math
 
 
 def get_activities():
+    # Fetch data from Strava API
+    strava_api.fetch_data()
+
     activities = json_normalize(strava_api.my_dataset)
+
 
     # Create new dataframe with only columns I care about
     cols = ['name', 'average_speed', 'suffer_score', 'upload_id', 'type', 'distance', 'moving_time', 'max_speed', 'total_elevation_gain', 'start_date_local', 'average_heartrate', 'max_heartrate', 'workout_type', 'elapsed_time', 'average_cadence']
