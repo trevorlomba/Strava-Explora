@@ -22,14 +22,28 @@ payload = {
     'f': 'json'
 }
 
-print("Requesting Token...\n")
-res = requests.post(auth_url, data=payload, verify=False)
-access_token = res.json()['access_token']
-print("Access Token = {}\n".format(access_token))
+# print("Requesting Token...\n")
+# res = requests.post(auth_url, data=payload, verify=False)
+# access_token = res.json()['access_token']
+# print("Access Token = {}\n".format(access_token))
 
-header = {'Authorization': 'Bearer ' + access_token}
-param = {'per_page': 200, 'page': 1}
-my_dataset = requests.get(activites_url, headers=header, params=param).json()
+# header = {'Authorization': 'Bearer ' + access_token}
+# param = {'per_page': 200, 'page': 1}
+# my_dataset = requests.get(activites_url, headers=header, params=param).json()
+
+
+def get_strava_data():
+    print("Requesting Token...\n")
+    res = requests.post(auth_url, data=payload, verify=False)
+    access_token = res.json()['access_token']
+    print("Access Token = {}\n".format(access_token))
+
+    header = {'Authorization': 'Bearer ' + access_token}
+    param = {'per_page': 200, 'page': 1}
+    my_dataset = requests.get(
+        activites_url, headers=header, params=param).json()
+
+    return my_dataset
 
 # print(my_dataset[0]["name"])
 # print(my_dataset[0]["map"]["summary_polyline"])

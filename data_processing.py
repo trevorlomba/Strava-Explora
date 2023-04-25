@@ -4,8 +4,8 @@ import uuid
 import seaborn as sns
 import pandas as pd
 from pandas import json_normalize
-import strava_api
-import strava_cleaning
+# import strava_api
+# import strava_cleaning
 import pandas as pd
 import matplotlib
 matplotlib.use('Agg')
@@ -18,8 +18,8 @@ from datetime import timedelta, datetime
 import math
 
 
-def get_activities():
-    activities = json_normalize(strava_api.my_dataset)
+def get_activities(my_dataset):
+    activities = json_normalize(my_dataset)
 
     # Create new dataframe with only columns I care about
     cols = ['name', 'average_speed', 'suffer_score', 'upload_id', 'type', 'distance', 'moving_time', 'max_speed', 'total_elevation_gain', 'start_date_local', 'average_heartrate', 'max_heartrate', 'workout_type', 'elapsed_time', 'average_cadence']
@@ -27,7 +27,8 @@ def get_activities():
     activities = activities[cols]
 
     # Break date into start time and date
-    activities['start_date_local'] = pd.to_datetime(activities['start_date_local'])
+    activities['start_date_local'] = pd.to_datetime(
+        activities['start_date_local']).dt.tz_convert(pytz.timezone('US/Eastern'))
     activities['weekday'] = activities['start_date_local'].map(lambda x: x.weekday)
     activities['start_time'] = activities['start_date_local'].dt.time
 
@@ -77,8 +78,8 @@ def get_activities():
     return runs
 
 
-def get_mileage_report_data():
-    runs = get_activities()
+def get_mileage_report_data(my_dataset):
+    runs = get_activities(my_dataset)
 
     most_recent_run = runs.iloc[0]
     most_recent_run_date = most_recent_run['start_date_local'].date()
@@ -97,6 +98,11 @@ def get_mileage_report_data():
     # Group the runs by week and calculate the total distance
     distance_by_week = runs.groupby(pd.Grouper(
         key='start_date_local', freq='W'))['distance'].sum()
+    
+    # # if no runs yet this week, add a row for this week
+    # if (distance_by_week.index[-1].date() != datetime.today().date()):
+    #     distance_by_week.loc[datetime.today().date()] = 0
+
 
     # Round the values to the nearest 10th
     distance_by_week = distance_by_week.round(1)
@@ -113,7 +119,9 @@ def get_mileage_report_data():
     three_weeks_before_previous = distance_by_week[-5] if len(
         distance_by_week) >= 5 else 0
 
-    highest_value = max(previous_week, week_before_previous,
+    week_prog = distance_by_week.values[-1]
+
+    highest_value = max(week_prog, previous_week, week_before_previous,
                         two_weeks_before_previous, three_weeks_before_previous)
     next_week_goal = highest_value * 1.1
 
@@ -132,28 +140,51 @@ def get_mileage_report_data():
     print('here are the distances by week')
     print(distance_by_week.values[-1])
     print(distance_by_week.values)
-    week_prog = distance_by_week.values[-1]
     print('here is the week prog')
     print(week_prog)
+
+    today = pd.Timestamp.now().tz_localize(
+        pytz.utc).tz_convert(pytz.timezone('US/Eastern'))
+
+
+    def days_left_in_week(today):
+        today_weekday = today.isoweekday()
+        days_left = 8 - today_weekday if today_weekday != 7 else 1
+        return days_left
+
+    days_left = days_left_in_week(today)
+    # Calculate the number of miles left to run this week
+
+    # if days_left == 7 && :
+    #     week_prog = 0
+
+    no_runs_this_week = 0
+
+
     miles_left = next_week_goal - week_prog
+    # if days_left == 7:
+    #     no_runs_this_week = 1
 
-
-  # First goal bar
-    ax14.bar(distance_by_week.index[distance_by_week.count()-1], next_week_goal, color=(252/255, 76/255, 2/255), width=3.5, label='Goal 1', alpha=.8)
-    ax14.text(distance_by_week.index[distance_by_week.count()-1], next_week_goal * 1.05, f'{next_week_goal:.2f}', ha='center', color=(252/255, 76/255, 2/255), fontsize=15, fontweight='bold')
+    # First goal bar
+    ax14.bar(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=no_runs_this_week),
+            next_week_goal, color=(252/255, 76/255, 2/255), width=3.5, label='Goal 1', alpha=.8)
+    ax14.text(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=no_runs_this_week), next_week_goal *
+            1.05, f'{next_week_goal:.2f}', ha='center', color=(252/255, 76/255, 2/255), fontsize=15, fontweight='bold')
 
     # Second goal bar (10% greater than the first goal)
     next_week_goal_2 = next_week_goal * 1.1
 
-    ax14.bar(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=1), next_week_goal_2, color=(252/255, 76/255, 2/255), width=3.5, label='Goal 2', alpha=0.3)
-    ax14.text(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=1), next_week_goal_2 * 1.05,
-              f'{next_week_goal_2:.2f}', ha='center', color=(252/255, 76/255, 2/255), fontsize=15, fontweight='bold', alpha=0.6)
+    ax14.bar(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(1 + no_runs_this_week)),
+            next_week_goal_2, color=(252/255, 76/255, 2/255), width=3.5, label='Goal 2', alpha=0.3)
+    ax14.text(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(1 + no_runs_this_week)), next_week_goal_2 * 1.05,
+            f'{next_week_goal_2:.2f}', ha='center', color=(252/255, 76/255, 2/255), fontsize=15, fontweight='bold', alpha=0.6)
 
     # Third goal bar (10% greater than the second goal)
     next_week_goal_3 = next_week_goal_2 * 1.1
-    ax14.bar(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=2), next_week_goal_3, color=(252/255, 76/255, 2/255), width=3.5, label='Goal 3', alpha=0.3)
-    ax14.text(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=2), next_week_goal_3 * 1.05,
-              f'{next_week_goal_3:.2f}', ha='center', color=(252/255, 76/255, 2/255), fontsize=15, fontweight='bold', alpha=0.6)
+    ax14.bar(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(2 + no_runs_this_week)),
+            next_week_goal_3, color=(252/255, 76/255, 2/255), width=3.5, label='Goal 3', alpha=0.3)
+    ax14.text(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(2 + no_runs_this_week)), next_week_goal_3 * 1.05,
+            f'{next_week_goal_3:.2f}', ha='center', color=(252/255, 76/255, 2/255), fontsize=15, fontweight='bold', alpha=0.6)
 
 
 
@@ -165,6 +196,10 @@ def get_mileage_report_data():
         # Adjust y-position of label
         ax14.text(val, distance_by_week.values[i] - 1,
                 distance_by_week.values[i].round(1), fontweight='bold', fontsize=11, ha='center', color='white', va='top')
+        # if(distance_by_week.values[i] == 0): 
+        #     ax14.bar(distance_by_week.index[distance_by_week.count()-1], distance_by_week.values[i], width=5, color=(
+        #         27/255, 117/255, 187/255), alpha=.8)
+        
 
     # Set the title and axis labels
     ax14.set_title('Total Distance by Week', fontsize=24)
@@ -189,21 +224,22 @@ def get_mileage_report_data():
     # Create the figure and axis
     fig16, ax16 = plt.subplots(figsize=(10, 6))
 
-    now = pd.Timestamp.now().tz_localize(pytz.utc).tz_convert(None)
+    now = pd.Timestamp.now().tz_localize(
+        pytz.utc).tz_convert(pytz.timezone('US/Eastern'))
 
     # Get the data for the last x days amd set the index to the start date
     last_7_days = runs[runs['start_date_local'].dt.tz_convert(
-        None) >= now - pd.Timedelta(days=7)].copy()
+        pytz.timezone('US/Eastern')) >= now - pd.Timedelta(days=7)].copy()
     last_7_days.set_index('start_date_local', inplace=True)
 
     last_15_days = runs[runs['start_date_local'].dt.tz_convert(
-        None) >= now - pd.Timedelta(days=15)].copy()
+        pytz.timezone('US/Eastern')) >= now - pd.Timedelta(days=15)].copy()
     last_15_days.set_index('start_date_local', inplace=True)
     last_14_days = runs[runs['start_date_local'].dt.tz_convert(
-        None) >= now - pd.Timedelta(days=14)].copy()
+        pytz.timezone('US/Eastern')) >= now - pd.Timedelta(days=14)].copy()
     last_14_days.set_index('start_date_local', inplace=True)
     last_3_days = runs[runs['start_date_local'].dt.tz_convert(
-        None) >= now - pd.Timedelta(days=3)].copy()
+        pytz.timezone('US/Eastern')) >= now - pd.Timedelta(days=3)].copy()
     last_3_days.set_index('start_date_local', inplace=True)
 
     # print(last_14_days['moving_time'])
@@ -226,8 +262,7 @@ def get_mileage_report_data():
     # print(moving_time_by_day_last_7_days)
     # print(moving_time_by_day_last_14_days)
 
-    today = pd.Timestamp.now().tz_localize(pytz.utc).tz_convert(None)
-
+  
 
     # Calculate the longest run in the last week
 
@@ -247,8 +282,8 @@ def get_mileage_report_data():
         print('start date last week')
         print(start_date_last_week)
 
-        return runs[(runs['start_date_local'].dt.tz_convert(None) >= start_date_last_week) &
-                    (runs['start_date_local'].dt.tz_convert(None) <= end_date_last_week)].copy()
+        return runs[(runs['start_date_local'].dt.tz_convert(pytz.timezone('US/Eastern')) >= start_date_last_week) &
+                    (runs['start_date_local'].dt.tz_convert(pytz.timezone('US/Eastern')) <= end_date_last_week)].copy()
 
 
     # Change the second argument to set a different start day
@@ -257,19 +292,13 @@ def get_mileage_report_data():
     # Find the longest run in the last week ending on the day before the first day of this week
     longest_run_last_2_weeks = last_15_days['distance'].max()
 
-    def days_left_in_week(today):
-        today_weekday = today.isoweekday()
-        days_left = 8 - today_weekday if today_weekday != 7 else 1
-        return days_left
 
-
-    days_left = days_left_in_week(today)
-    # Calculate the number of miles left to run this week
     miles_left = next_week_goal - week_prog
 
 
     # Get today's date
-    today = pd.Timestamp.now().normalize()
+    today = pd.Timestamp.now().tz_localize(pytz.utc).tz_convert(
+        pytz.timezone('US/Eastern')).normalize()
 
     # Calculate the days left in the week (days until next Monday)
     days_left = (7 - today.weekday()) % 7
@@ -284,7 +313,7 @@ def get_mileage_report_data():
 
     # Filter the runs since the most recent Monday including today
     runs_since_monday = runs[(runs['start_date_local'].dt.tz_convert(
-        None) >= most_recent_monday) & (runs['start_date_local'].dt.tz_convert(None) <= today)]
+        pytz.timezone('US/Eastern')) >= most_recent_monday) & (runs['start_date_local'].dt.tz_convert(pytz.timezone('US/Eastern')) <= today)]
 
     # Find the longest run since the most recent Monday including today
     longest_run_since_monday = runs_since_monday['distance'].max()
@@ -293,7 +322,8 @@ def get_mileage_report_data():
         longest_run_since_monday)
 
     # Find the longest run since Monday including today and the most recent monday
-    longest_run_since_monday = runs[(runs['start_date_local'].dt.tz_convert(None) >= today - pd.Timedelta(days=7 - days_left))]['distance'].max()
+    longest_run_since_monday = runs[(runs['start_date_local'].dt.tz_convert(pytz.timezone(
+        'US/Eastern')) >= today - pd.Timedelta(days=7 - days_left))]['distance'].max()
 
     # If there was no run since monday, set the longest run to 0
     if not longest_run_since_monday:
@@ -446,12 +476,13 @@ def get_mileage_report_data():
         'long_run_improved': str(long_run_improved),
         'miles_left_minus_long_run_goal': miles_left_minus_long_run_goal,
         'days_left_minus_long_run': days_left_minus_long_run,
-        'most_recent_run_today': most_recent_run_today
+        'most_recent_run_today': most_recent_run_today,
+        'no_runs_this_week': no_runs_this_week
         }
 
 
-def get_cadence_report_data():
-    runs = get_activities()
+def get_cadence_report_data(my_dataset):
+    runs = get_activities(my_dataset)
     # create the seventeenth plot
     fig17 = plt.figure(figsize=(10, 6))
     fig17.subplots_adjust(bottom=0.2, left=0.1)
