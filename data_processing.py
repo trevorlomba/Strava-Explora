@@ -423,6 +423,9 @@ def get_mileage_report_data(my_dataset):
 
     y = np.asarray(runs.cadence)
     last_run_average_cadence = y[0]
+    # if last run average cadence is not a number, set it to 0
+    if math.isnan(last_run_average_cadence):
+        last_run_average_cadence = 0
 
     # if no runs since monday, set longest run since monday to 0
     if longest_run_since_monday is None or math.isnan(longest_run_since_monday):
@@ -547,6 +550,9 @@ def get_cadence_report_data(my_dataset):
     recent_run = runs.head(1)
     print(recent_run)
     most_recent_cadence = recent_run['cadence'].values[0]
+    # if most recent cadence is NaN, set it to 0
+    if np.isnan(most_recent_cadence):
+        most_recent_cadence = 0
     print(most_recent_cadence)
 
     return {
