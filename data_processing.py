@@ -172,9 +172,12 @@ def get_mileage_report_data(my_dataset):
     if(miles_left > 0):
         ax14.bar(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=no_runs_this_week),
                 next_week_goal, color=(252/255, 76/255, 2/255), width=3.5, label='Goal 1', alpha=.8)
-
-    ax14.text(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=no_runs_this_week), next_week_goal *
+        ax14.text(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=no_runs_this_week), next_week_goal *
             1.05, f'{next_week_goal:.2f}', ha='center', color=(252/255, 76/255, 2/255), fontsize=15, fontweight='bold')
+
+    print('WEEK PROG')
+    print(week_prog)
+    print(miles_left)
 
     ax14.bar(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(1 + no_runs_this_week)),
             next_week_goal_2, color=(252/255, 76/255, 2/255), width=3.5, label='Goal 2', alpha=0.3)
