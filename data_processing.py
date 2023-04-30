@@ -121,7 +121,7 @@ def get_mileage_report_data(my_dataset):
 
     week_prog = distance_by_week.values[-1]
 
-    highest_value = max(week_prog, previous_week, week_before_previous,
+    highest_value = max(previous_week, week_before_previous,
                         two_weeks_before_previous, three_weeks_before_previous)
     next_week_goal = highest_value * 1.1
 
@@ -165,14 +165,16 @@ def get_mileage_report_data(my_dataset):
     # if days_left == 7:
     #     no_runs_this_week = 1
 
-    # First goal bar
-    ax14.bar(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=no_runs_this_week),
-            next_week_goal, color=(252/255, 76/255, 2/255), width=3.5, label='Goal 1', alpha=.8)
-    ax14.text(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=no_runs_this_week), next_week_goal *
-            1.05, f'{next_week_goal:.2f}', ha='center', color=(252/255, 76/255, 2/255), fontsize=15, fontweight='bold')
-
     # Second goal bar (10% greater than the first goal)
     next_week_goal_2 = next_week_goal * 1.1
+    # First goal bar
+    
+    if(miles_left > 0):
+        ax14.bar(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=no_runs_this_week),
+                next_week_goal, color=(252/255, 76/255, 2/255), width=3.5, label='Goal 1', alpha=.8)
+
+    ax14.text(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=no_runs_this_week), next_week_goal *
+            1.05, f'{next_week_goal:.2f}', ha='center', color=(252/255, 76/255, 2/255), fontsize=15, fontweight='bold')
 
     ax14.bar(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(1 + no_runs_this_week)),
             next_week_goal_2, color=(252/255, 76/255, 2/255), width=3.5, label='Goal 2', alpha=0.3)
