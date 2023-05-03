@@ -121,8 +121,7 @@ def get_mileage_report_data(my_dataset):
 
     week_prog = distance_by_week.values[-1]
 
-    highest_value = max(previous_week, week_before_previous,
-                        two_weeks_before_previous, three_weeks_before_previous)
+    highest_value = min(previous_week, week_before_previous * 1.1)
     next_week_goal = highest_value * 1.1
 
     # print distances by weeks
@@ -150,48 +149,55 @@ def get_mileage_report_data(my_dataset):
     def days_left_in_week(today):
         today_weekday = today.isoweekday()
         days_left = 8 - today_weekday if today_weekday != 7 else 1
+
+
         return days_left
 
     days_left = days_left_in_week(today)
     # Calculate the number of miles left to run this week
 
+
+
+    # if days_left == 7:
+    #     no_runs_this_week = 1
     # if days_left == 7 && :
     #     week_prog = 0
 
-    no_runs_this_week = 0
-
-
     miles_left = next_week_goal - week_prog
-    # if days_left == 7:
-    #     no_runs_this_week = 1
-
     # Second goal bar (10% greater than the first goal)
     next_week_goal_2 = next_week_goal * 1.1
     # First goal bar
     
     if(miles_left > 0):
-        ax14.bar(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=no_runs_this_week),
+        ax14.bar(distance_by_week.index[distance_by_week.count()-1],
                 next_week_goal, color=(252/255, 76/255, 2/255), width=3.5, label='Goal 1', alpha=.8)
-        ax14.text(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=no_runs_this_week), next_week_goal *
+        ax14.text(distance_by_week.index[distance_by_week.count()-1], next_week_goal *
             1.05, f'{next_week_goal:.2f}', ha='center', color=(252/255, 76/255, 2/255), fontsize=15, fontweight='bold')
 
     print('WEEK PROG')
     print(week_prog)
     print(miles_left)
 
-    ax14.bar(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(1 + no_runs_this_week)),
+    ax14.bar(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(1)),
             next_week_goal_2, color=(252/255, 76/255, 2/255), width=3.5, label='Goal 2', alpha=0.3)
-    ax14.text(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(1 + no_runs_this_week)), next_week_goal_2 * 1.05,
+    ax14.text(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(1)), next_week_goal_2 * 1.05,
             f'{next_week_goal_2:.2f}', ha='center', color=(252/255, 76/255, 2/255), fontsize=15, fontweight='bold', alpha=0.6)
 
     # Third goal bar (10% greater than the second goal)
     next_week_goal_3 = next_week_goal_2 * 1.1
-    ax14.bar(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(2 + no_runs_this_week)),
+    ax14.bar(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(2)),
             next_week_goal_3, color=(252/255, 76/255, 2/255), width=3.5, label='Goal 3', alpha=0.3)
-    ax14.text(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(2 + no_runs_this_week)), next_week_goal_3 * 1.05,
+    ax14.text(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(2)), next_week_goal_3 * 1.05,
             f'{next_week_goal_3:.2f}', ha='center', color=(252/255, 76/255, 2/255), fontsize=15, fontweight='bold', alpha=0.6)
 
 
+    # if the most recent run in runs is before the first day of the current week, set no_runs_this_week to one 
+    if runs.iloc[0]['start_date_local'].date() > datetime.today().date() - timedelta(days=datetime.today().isoweekday()):
+        no_runs_this_week = 0
+    else:
+        no_runs_this_week = 1
+        week_prog = 0
+        next_week_goal = next_week_goal * 1.1
 
     # Plot the bar chart and add labels
     for i, val in enumerate(distance_by_week.index):
@@ -442,7 +448,9 @@ def get_mileage_report_data(my_dataset):
         days_left_minus_long_run = days_left - 1
         miles_left_minus_long_run_goal = miles_left
 
-    
+    #if no_runs_this_week, set week_prog to 0
+    if no_runs_this_week == 1: 
+        week_prog = 0
 
 
     # print('week_prog:', week_prog)
