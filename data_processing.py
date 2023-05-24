@@ -121,7 +121,7 @@ def get_mileage_report_data(my_dataset):
 
     week_prog = distance_by_week.values[-1]
 
-    highest_value = min(previous_week, week_before_previous * 1.1)
+    highest_value = max(previous_week, week_before_previous)
     next_week_goal = highest_value * 1.1
 
     # print distances by weeks
@@ -177,6 +177,8 @@ def get_mileage_report_data(my_dataset):
     print('WEEK PROG')
     print(week_prog)
     print(miles_left)
+
+    ax14.set_ylim(bottom=0)
 
     ax14.bar(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(1)),
             next_week_goal_2, color=(252/255, 76/255, 2/255), width=3.5, label='Goal 2', alpha=0.3)
@@ -412,6 +414,9 @@ def get_mileage_report_data(my_dataset):
     ax16.set_xlabel('Date', fontsize=14)
     ax16.set_ylabel('Time (minutes)', fontsize=14)
     ax16.xaxis.set_major_locator(ticker.MultipleLocator())
+
+    # Set y-axis minimum value to 0
+    ax16.set_ylim(bottom=0)
 
 
     # Set the tick labels to be the start date of the week
