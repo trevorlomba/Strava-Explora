@@ -444,7 +444,7 @@ def get_mileage_report_data(my_dataset):
 
     # Set the title and axis labels
     # ax14.set_title('Total Distance by Week', fontsize=24)
-    ax16.set_title('Moving Time by Day', fontsize=24)
+    ax16.set_title('Running Time by Day', fontsize=24)
     ax16.set_xlabel('Date', fontsize=14)
     ax16.set_ylabel('Time (minutes)', fontsize=14)
     ax16.xaxis.set_major_locator(ticker.MultipleLocator())
