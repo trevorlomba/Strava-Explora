@@ -34,6 +34,8 @@ def get_activities(my_dataset):
 
     runs = activities.loc[(activities['type'] == 'Run') & (
         activities['start_date_local'].dt.year == 2023)].copy()
+    
+    walks = activities.loc[(activities['type'] == 'Walk') & (activities['start_date_local'].dt.year == 2023)].copy()
 
     # Fill missing values with dummy values
     dummy_values = {
@@ -71,15 +73,21 @@ def get_activities(my_dataset):
         lambda x: int(x))
     runs.loc[:, 'moving_time_formatted'] = runs['moving_time'].apply(
         lambda x: f"{int(x/60):02d}:{int(x%60):02d}")
+    
+    # Convert distance to miles for walks, same as for runs
+    walks.loc[:, 'distance'] = walks['distance'] * 0.000621371
+    weekly_walks = walks.groupby(pd.Grouper(
+        key='start_date_local', freq='W'))['distance'].sum().round(1)  # Group walks by week and sum the distance, round to nearest tenth
+
 
     # print(most_recent_run)
 
 
-    return runs
+    return runs, weekly_walks
 
 
 def get_mileage_report_data(my_dataset):
-    runs = get_activities(my_dataset)
+    runs, weekly_walks = get_activities(my_dataset)
 
     most_recent_run = runs.iloc[0]
     most_recent_run_date = most_recent_run['start_date_local'].date()
@@ -168,12 +176,6 @@ def get_mileage_report_data(my_dataset):
     next_week_goal_2 = next_week_goal * 1.1
     # First goal bar
     
-    if(miles_left > 0):
-        ax14.bar(distance_by_week.index[distance_by_week.count()-1],
-                next_week_goal, color=(252/255, 76/255, 2/255), width=3.5, label='Goal 1', alpha=.8)
-        ax14.text(distance_by_week.index[distance_by_week.count()-1], next_week_goal *
-            1.05, f'{next_week_goal:.2f}', ha='center', color=(252/255, 76/255, 2/255), fontsize=15, fontweight='bold')
-
     print('WEEK PROG')
     print(week_prog)
     print(miles_left)
@@ -181,14 +183,14 @@ def get_mileage_report_data(my_dataset):
     ax14.set_ylim(bottom=0)
 
     ax14.bar(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(1)),
-            next_week_goal_2, color=(252/255, 76/255, 2/255), width=3.5, label='Goal 2', alpha=0.3)
+            next_week_goal_2, color=(252/255, 76/255, 2/255), width=3.5, alpha=0.3)
     ax14.text(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(1)), next_week_goal_2 * 1.05,
             f'{next_week_goal_2:.2f}', ha='center', color=(252/255, 76/255, 2/255), fontsize=15, fontweight='bold', alpha=0.6)
 
     # Third goal bar (10% greater than the second goal)
     next_week_goal_3 = next_week_goal_2 * 1.1
     ax14.bar(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(2)),
-            next_week_goal_3, color=(252/255, 76/255, 2/255), width=3.5, label='Goal 3', alpha=0.3)
+            next_week_goal_3, color=(252/255, 76/255, 2/255), width=3.5, alpha=0.3)
     ax14.text(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(2)), next_week_goal_3 * 1.05,
             f'{next_week_goal_3:.2f}', ha='center', color=(252/255, 76/255, 2/255), fontsize=15, fontweight='bold', alpha=0.6)
 
@@ -203,15 +205,24 @@ def get_mileage_report_data(my_dataset):
 
     # Plot the bar chart and add labels
     for i, val in enumerate(distance_by_week.index):
-        ax14.bar(val, distance_by_week.values[i], width=5, color=(
-            27/255, 117/255, 187/255), alpha=.8)
+        if i == 0:  # add label only for the first bar
+            ax14.bar(val, distance_by_week.values[i], width=5, color=(
+                27/255, 117/255, 187/255), alpha=.8, label='Running Distance', zorder=2)
+        else:
+            ax14.bar(val, distance_by_week.values[i], width=5, color=(
+                27/255, 117/255, 187/255), alpha=.8, zorder=2)
+
         label = val  # Format date as first day of week
         # Adjust y-position of label
         ax14.text(val, distance_by_week.values[i] - 1,
                 distance_by_week.values[i].round(1), fontweight='bold', fontsize=11, ha='center', color='white', va='top')
-        # if(distance_by_week.values[i] == 0): 
-        #     ax14.bar(distance_by_week.index[distance_by_week.count()-1], distance_by_week.values[i], width=5, color=(
-        #         27/255, 117/255, 187/255), alpha=.8)
+
+
+    # Set the x-axis to only show data from the last 2 months
+    three_months_ago = pd.Timestamp.now().tz_localize(
+        pytz.utc).tz_convert(pytz.timezone('US/Eastern')) - pd.DateOffset(months=3)
+    ax14.set_xlim(left=three_months_ago)
+
         
 
     # Set the title and axis labels
@@ -219,15 +230,38 @@ def get_mileage_report_data(my_dataset):
     ax14.set_xlabel('Week', fontsize=14)
     ax14.set_ylabel('Distance (miles)', fontsize=14)
 
+    longest_walking_week = weekly_walks.max()
 
-    # Set y-axis limit with a buffer of 10%
-    ax14.set_ylim(top=next_week_goal_3 * 1.2)
+    # calculate both limits
+    ylim1 = next_week_goal_3 * 1.2
+    ylim2 = longest_walking_week * 1.2
+
+    # choose the maximum of the two
+    ylim = max(ylim1, ylim2)
+
+    # set the y limit
+    ax14.set_ylim(top=ylim)
+
 
     # Set the tick labels to be the start date of the week
     fig14.autofmt_xdate(rotation=45)
 
     # Set the maximum number of x-axis ticks to 10
     ax14.xaxis.set_major_locator(ticker.MultipleLocator(7))
+
+    ax14.plot(weekly_walks.index, weekly_walks.values, color='mediumaquamarine', marker='o',
+              linestyle='dashed', linewidth=3, markersize=10, label='Walking Distance')
+    
+    if (miles_left > 0):
+        ax14.bar(distance_by_week.index[distance_by_week.count()-1],
+                 next_week_goal, color=(252/255, 76/255, 2/255), width=3.5, label='Goal Running Distance', alpha=.8, zorder=1)
+        ax14.text(distance_by_week.index[distance_by_week.count()-1], next_week_goal *
+                  1.05, f'{next_week_goal:.2f}', ha='center', color=(252/255, 76/255, 2/255), fontsize=15, fontweight='bold')
+
+
+
+    # Add a legend
+    ax14.legend(loc='upper left')
 
     title = ax14.get_title()
     unique_filename = f"{uuid.uuid4()}.png"
@@ -503,7 +537,12 @@ def get_mileage_report_data(my_dataset):
 
 
 def get_cadence_report_data(my_dataset):
-    runs = get_activities(my_dataset)
+    runs, weekly_walks = get_activities(my_dataset)
+
+    # filter runs with pace over 9 minutes
+    runs = runs[runs['pace'] <= 9]
+
+
     # create the seventeenth plot
     fig17 = plt.figure(figsize=(10, 6))
     fig17.subplots_adjust(bottom=0.2, left=0.1)
