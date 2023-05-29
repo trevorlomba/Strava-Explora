@@ -80,7 +80,6 @@ def get_activities(my_dataset):
         key='start_date_local', freq='W'))['distance'].sum().round(1)  # Group walks by week and sum the distance, round to nearest tenth
 
 
-    # print(most_recent_run)
 
 
     return runs, weekly_walks
@@ -91,9 +90,8 @@ def get_mileage_report_data(my_dataset):
 
     most_recent_run = runs.iloc[0]
     most_recent_run_date = most_recent_run['start_date_local'].date()
-    print(most_recent_run_date)
     most_recent_run_today = most_recent_run_date == datetime.today().date()
-    print(most_recent_run_today)
+
 
     for column in runs.columns:
         if runs[column].dtype == 'int64':
@@ -107,11 +105,6 @@ def get_mileage_report_data(my_dataset):
     distance_by_week = runs.groupby(pd.Grouper(
         key='start_date_local', freq='W'))['distance'].sum()
     
-    # # if no runs yet this week, add a row for this week
-    # if (distance_by_week.index[-1].date() != datetime.today().date()):
-    #     distance_by_week.loc[datetime.today().date()] = 0
-
-
     # Round the values to the nearest 10th
     distance_by_week = distance_by_week.round(1)
     last_week_actual = distance_by_week.values[-2]
@@ -129,26 +122,8 @@ def get_mileage_report_data(my_dataset):
 
     week_prog = distance_by_week.values[-1]
 
-    highest_value = max(previous_week, week_before_previous)
+    highest_value = max(previous_week, week_before_previous, two_weeks_before_previous, three_weeks_before_previous)
     next_week_goal = highest_value * 1.1
-
-    # print distances by weeks
-    print('here are the distances by week')
-    # print(distance_by_week)
-    print('here are the distances by week')
-    print(distance_by_week)
-    print('here are the distances by week before previous')
-    print(week_before_previous)
-    print('here are the distances by week before previous')
-    print(two_weeks_before_previous)
-    print(three_weeks_before_previous)
-    print(highest_value)
-
-    print('here are the distances by week')
-    print(distance_by_week.values[-1])
-    print(distance_by_week.values)
-    print('here is the week prog')
-    print(week_prog)
 
     today = pd.Timestamp.now().tz_localize(
         pytz.utc).tz_convert(pytz.timezone('US/Eastern'))
@@ -165,21 +140,10 @@ def get_mileage_report_data(my_dataset):
     # Calculate the number of miles left to run this week
 
 
-
-    # if days_left == 7:
-    #     no_runs_this_week = 1
-    # if days_left == 7 && :
-    #     week_prog = 0
-
     miles_left = next_week_goal - week_prog
     # Second goal bar (10% greater than the first goal)
     next_week_goal_2 = next_week_goal * 1.1
-    # First goal bar
     
-    print('WEEK PROG')
-    print(week_prog)
-    print(miles_left)
-
     ax14.set_ylim(bottom=0)
 
     ax14.bar(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(1)),
@@ -201,7 +165,7 @@ def get_mileage_report_data(my_dataset):
     else:
         no_runs_this_week = 1
         week_prog = 0
-        next_week_goal = next_week_goal * 1.1
+        # next_week_goal = next_week_goal * 1.1
 
     # Plot the bar chart and add labels
     for i, val in enumerate(distance_by_week.index):
@@ -250,7 +214,7 @@ def get_mileage_report_data(my_dataset):
     ax14.xaxis.set_major_locator(ticker.MultipleLocator(7))
 
     ax14.plot(weekly_walks.index, weekly_walks.values, color='mediumaquamarine', marker='o',
-              linestyle='dashed', linewidth=3, markersize=10, label='Walking Distance')
+              linestyle='dashed', linewidth=3, markersize=10, label='Walking Distance', alpha= .8, zorder=3)
     
     if (miles_left > 0):
         ax14.bar(distance_by_week.index[distance_by_week.count()-1],
@@ -289,10 +253,6 @@ def get_mileage_report_data(my_dataset):
         pytz.timezone('US/Eastern')) >= now - pd.Timedelta(days=3)].copy()
     last_3_days.set_index('start_date_local', inplace=True)
 
-    # print(last_14_days['moving_time'])
-    # print(last_7_days['moving_time'])
-    # print(last_3_days['moving_time'])
-
     # Group the runs by day and calculate the total distance
     distance_by_day = last_14_days.groupby(
         last_14_days.index.date)['distance'].sum()
@@ -305,29 +265,13 @@ def get_mileage_report_data(my_dataset):
     moving_time_by_day_last_14_days = last_14_days.groupby(
         last_14_days.index.date)['moving_time'].sum()
 
-    # print(moving_time_by_day_last_3_days)
-    # print(moving_time_by_day_last_7_days)
-    # print(moving_time_by_day_last_14_days)
-
-  
-
     # Calculate the longest run in the last week
-
-
-
     def get_last_week_data(today):
         days_since_sunday = (today.isoweekday() % 7) or 7
 
-        print('days since sunday')
-        print(days_since_sunday)
-
         # Calculate the start and end dates for the last week
         end_date_last_week = (today - pd.DateOffset(days=days_since_sunday)).replace(hour=23, minute=59, second=59, microsecond=0)
-        print('end date last week')
-        print(end_date_last_week)
         start_date_last_week = end_date_last_week - pd.DateOffset(days=6)
-        print('start date last week')
-        print(start_date_last_week)
 
         return runs[(runs['start_date_local'].dt.tz_convert(pytz.timezone('US/Eastern')) >= start_date_last_week) &
                     (runs['start_date_local'].dt.tz_convert(pytz.timezone('US/Eastern')) <= end_date_last_week)].copy()
@@ -365,9 +309,6 @@ def get_mileage_report_data(my_dataset):
     # Find the longest run since the most recent Monday including today
     longest_run_since_monday = runs_since_monday['distance'].max()
 
-    print("The longest run since the most recent Monday including today is:",
-        longest_run_since_monday)
-
     # Find the longest run since Monday including today and the most recent monday
     longest_run_since_monday = runs[(runs['start_date_local'].dt.tz_convert(pytz.timezone(
         'US/Eastern')) >= today - pd.Timedelta(days=7 - days_left))]['distance'].max()
@@ -397,53 +338,24 @@ def get_mileage_report_data(my_dataset):
     else:
         miles_left_minus_long_run_goal = miles_left
 
-    # print(f"Goal mileage this week: {next_week_goal}")
-    # print("Days left in the week:", days_left)
-    # print("Miles left to run this week:", miles_left)
-    # print("Average miles left to run this week:", avg_miles_left)
-    # print("Longest run since Monday:", longest_run_since_monday)
-    # print("Longest last week:", longest_run_last_2_weeks)
-    # print("Long run improved:", long_run_improved)
-    # print(f"Goal long run (10% more than the longest last week): {goal_long_run:.2f}")
-    # print("Miles left minus long run goal:", miles_left_minus_long_run_goal)
-    # print(f"Days left in the week minus the long run: {days_left_minus_long_run}")
-
- 
-    # print("\nLast week's distances:")
-    # print(last_week_data['distance'])
-
-
-
-    # Calculate a goal variable of 10% more than the longest run in the last week
-
-    # Display the calculated variables
-
-    # Create a list of colors for the bars based on whether there is any distance or not
-
-
-
 
     max_moving_time = moving_time_by_day.max()
-    print(max_moving_time)
 
     min_moving_time = moving_time_by_day.min()
 
     for i, yval in enumerate(moving_time_by_day):
         # ax.text(i, yval + 0.01, f"{yval:.2f}", ha="center", va="bottom")
-        print(yval / max_moving_time)
         ax16.bar(moving_time_by_day.index[i], yval, width=0.8, alpha=(
             yval / max_moving_time)*.7, color=(
             27/255, 117/255, 187/255))
 
 
     #set y label to be minutes:seconds with both second digits
-    ax16.set_yticklabels([f"{int(x/60)}:{int(x%60):02d}" for x in ax16.get_yticks()])
-
-    # ax16.set_yticklabels([str(int(x/60)) + ':' + str(int(x % 60)) for x in ax16.get_yticks()])
-    # ax16.set_yticklabels([str(int(x/60)) + ':' + str(int(x % 60)) for x in ax16.get_yticks()])
+    locs = ax16.get_yticks()
+    ax16.yaxis.set_major_locator(ticker.FixedLocator(locs))
+    ax16.set_yticklabels([f"{int(x/60)}:{int(x%60):02d}" for x in locs])
 
     # Set the title and axis labels
-    # ax14.set_title('Total Distance by Week', fontsize=24)
     ax16.set_title('Running Time by Day', fontsize=24)
     ax16.set_xlabel('Date', fontsize=14)
     ax16.set_ylabel('Time (minutes)', fontsize=14)
@@ -467,10 +379,6 @@ def get_mileage_report_data(my_dataset):
     days_zero_last_14 = int(14 - moving_time_by_day_last_14_days.count())
     days_zero_last_3 = int(3 - moving_time_by_day_last_3_days.count())
 
-    # print moving days last 14 days
-    # print('moving_time_by_day_last_14_days')
-    # print(moving_time_by_day_last_14_days)
-
     y = np.asarray(runs.cadence)
     last_run_average_cadence = y[0]
     # if last run average cadence is not a number, set it to 0
@@ -480,37 +388,16 @@ def get_mileage_report_data(my_dataset):
     # if no runs since monday, set longest run since monday to 0
     if longest_run_since_monday is None or math.isnan(longest_run_since_monday):
         longest_run_since_monday = float(0)
-        # next_week_goal = next_week_goal * 1.1
         miles_left = next_week_goal
         avg_miles_left = miles_left / days_left
         long_run_improved = 'False'
         days_left_minus_long_run = days_left - 1
         miles_left_minus_long_run_goal = miles_left
 
-    #if no_runs_this_week, set week_prog to 0
     if no_runs_this_week == 1: 
         week_prog = 0
 
 
-    # print('week_prog:', week_prog)
-    # print('next_week_goal:', next_week_goal)
-    # print('miles_left:', miles_left)
-    # print('days_zero_last_3:', days_zero_last_3)
-    # print('days_zero_last_14:', days_zero_last_14)
-    # print('days_zero_last_7:', days_zero_last_7)
-    # print('last_run_average_cadence:', last_run_average_cadence)
-    # print('total_distance_by_week_plot:', total_distance_by_week_plot)
-    # print('moving_time_by_day_plot:', moving_time_by_day_plot)
-    # print('days_left:', days_left)
-    # print('avg_miles_left:', avg_miles_left)
-    # print('longest_run_last_2_weeks:', longest_run_last_2_weeks)
-    # print('longest_run_since_monday:', longest_run_since_monday)
-    # print('goal_long_run:', goal_long_run)
-    # print('long_run_improved:', long_run_improved)
-    # print('miles_left_minus_long_run_goal:', miles_left_minus_long_run_goal)
-    # print('days_left_minus_long_run:', days_left_minus_long_run)
-
-    print(week_prog)
 
 
     return {
@@ -580,6 +467,12 @@ def get_cadence_report_data(my_dataset):
         27/255, 117/255, 187/255)).set_title(
         "Average Heartrate per Mile vs Average Cadence", fontsize=26)
 
+    # Compute the start and end dates for the x-axis
+    start_date = datetime.now() - timedelta(days=14)
+    end_date = datetime.now()
+
+    ax18.set_xlim([start_date, end_date])
+    
     # Set font size and alignment of x and y labels
     ax18.set_xlabel('Average Heartrate per Mile (bpm)',
                     fontsize=18, labelpad=18, ha='center')
@@ -605,12 +498,10 @@ def get_cadence_report_data(my_dataset):
     pace_vs_cadence_r2 = pace_vs_cadence_r2
     heartrate_vs_cadence_r2 = heartrate_vs_cadence_r2
     recent_run = runs.head(1)
-    print(recent_run)
     most_recent_cadence = recent_run['cadence'].values[0]
     # if most recent cadence is NaN, set it to 0
     if np.isnan(most_recent_cadence):
         most_recent_cadence = 0
-    print(most_recent_cadence)
 
     return {
         'average_cadence': average_cadence.round(2),
