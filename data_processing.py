@@ -364,6 +364,11 @@ def get_mileage_report_data(my_dataset):
     # Set y-axis minimum value to 0
     ax16.set_ylim(bottom=0)
 
+    # Compute the start and end dates for the x-axis
+    start_date = datetime.now() - timedelta(days=14)
+    end_date = datetime.now()
+
+    ax16.set_xlim([start_date, end_date])
 
     # Set the tick labels to be the start date of the week
     fig16.autofmt_xdate(rotation=45)
@@ -467,12 +472,8 @@ def get_cadence_report_data(my_dataset):
         27/255, 117/255, 187/255)).set_title(
         "Average Heartrate per Mile vs Average Cadence", fontsize=26)
 
-    # Compute the start and end dates for the x-axis
-    start_date = datetime.now() - timedelta(days=14)
-    end_date = datetime.now()
 
-    ax18.set_xlim([start_date, end_date])
-    
+
     # Set font size and alignment of x and y labels
     ax18.set_xlabel('Average Heartrate per Mile (bpm)',
                     fontsize=18, labelpad=18, ha='center')
