@@ -79,6 +79,9 @@ def get_activities(my_dataset):
     weekly_walks = walks.groupby(pd.Grouper(
         key='start_date_local', freq='W'))['distance'].sum().round(1)  # Group walks by week and sum the distance, round to nearest tenth
 
+    # print(activities.columns)
+    print(activities['start_date_local'].min())
+
 
 
 
@@ -148,15 +151,15 @@ def get_mileage_report_data(my_dataset):
 
     ax14.bar(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(1)),
             next_week_goal_2, color=(252/255, 76/255, 2/255), width=3.5, alpha=0.3)
-    ax14.text(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(1)), next_week_goal_2 * 1.05,
-            f'{next_week_goal_2:.2f}', ha='center', color=(252/255, 76/255, 2/255), fontsize=15, fontweight='bold', alpha=0.6)
+    # ax14.text(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(1)), next_week_goal_2 * 1.05,
+    #         f'{next_week_goal_2:.2f}', ha='center', color=(252/255, 76/255, 2/255), fontsize=15, fontweight='bold', alpha=0.6)
 
     # Third goal bar (10% greater than the second goal)
     next_week_goal_3 = next_week_goal_2 * 1.1
     ax14.bar(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(2)),
             next_week_goal_3, color=(252/255, 76/255, 2/255), width=3.5, alpha=0.3)
-    ax14.text(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(2)), next_week_goal_3 * 1.05,
-            f'{next_week_goal_3:.2f}', ha='center', color=(252/255, 76/255, 2/255), fontsize=15, fontweight='bold', alpha=0.6)
+    # ax14.text(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(2)), next_week_goal_3 * 1.05,
+    #         f'{next_week_goal_3:.2f}', ha='center', color=(252/255, 76/255, 2/255), fontsize=15, fontweight='bold', alpha=0.6)
 
 
     # if the most recent run in runs is before the first day of the current week, set no_runs_this_week to one 
@@ -185,7 +188,7 @@ def get_mileage_report_data(my_dataset):
     # Set the x-axis to only show data from the last 2 months
     three_months_ago = pd.Timestamp.now().tz_localize(
         pytz.utc).tz_convert(pytz.timezone('US/Eastern')) - pd.DateOffset(months=3)
-    ax14.set_xlim(left=three_months_ago)
+    # ax14.set_xlim(left=three_months_ago)
 
         
 
@@ -401,6 +404,7 @@ def get_mileage_report_data(my_dataset):
 
     if no_runs_this_week == 1: 
         week_prog = 0
+
 
 
 
