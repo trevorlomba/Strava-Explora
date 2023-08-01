@@ -151,15 +151,15 @@ def get_mileage_report_data(my_dataset):
 
     ax14.bar(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(1)),
             next_week_goal_2, color=(252/255, 76/255, 2/255), width=3.5, alpha=0.3)
-    # ax14.text(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(1)), next_week_goal_2 * 1.05,
-    #         f'{next_week_goal_2:.2f}', ha='center', color=(252/255, 76/255, 2/255), fontsize=15, fontweight='bold', alpha=0.6)
+    ax14.text(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(1)), next_week_goal_2 * 1.05,
+            f'{next_week_goal_2:.2f}', ha='center', color=(252/255, 76/255, 2/255), fontsize=15, fontweight='bold', alpha=0.6)
 
     # Third goal bar (10% greater than the second goal)
     next_week_goal_3 = next_week_goal_2 * 1.1
     ax14.bar(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(2)),
             next_week_goal_3, color=(252/255, 76/255, 2/255), width=3.5, alpha=0.3)
-    # ax14.text(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(2)), next_week_goal_3 * 1.05,
-    #         f'{next_week_goal_3:.2f}', ha='center', color=(252/255, 76/255, 2/255), fontsize=15, fontweight='bold', alpha=0.6)
+    ax14.text(distance_by_week.index[distance_by_week.count()-1] + timedelta(weeks=(2)), next_week_goal_3 * 1.05,
+            f'{next_week_goal_3:.2f}', ha='center', color=(252/255, 76/255, 2/255), fontsize=15, fontweight='bold', alpha=0.6)
 
 
     # if the most recent run in runs is before the first day of the current week, set no_runs_this_week to one 
@@ -216,8 +216,10 @@ def get_mileage_report_data(my_dataset):
     # Set the maximum number of x-axis ticks to 10
     ax14.xaxis.set_major_locator(ticker.MultipleLocator(7))
 
-    ax14.plot(weekly_walks.index, weekly_walks.values, color='mediumaquamarine', marker='o',
-              linestyle='dashed', linewidth=3, markersize=10, label='Walking Distance', alpha= .8, zorder=3)
+    ax14.plot(weekly_walks.index, weekly_walks.values, color='lightblue', marker='o',
+              linestyle='dashed', linewidth=3, markersize=1, label='Walking Distance', alpha= .8, zorder=0)
+    ax14.fill_between(weekly_walks.index, weekly_walks.values, color='lightblue', alpha=.5, zorder=-1)
+
     
     if (miles_left > 0):
         ax14.bar(distance_by_week.index[distance_by_week.count()-1],
@@ -349,7 +351,7 @@ def get_mileage_report_data(my_dataset):
     for i, yval in enumerate(moving_time_by_day):
         # ax.text(i, yval + 0.01, f"{yval:.2f}", ha="center", va="bottom")
         ax16.bar(moving_time_by_day.index[i], yval, width=0.8, alpha=(
-            yval / max_moving_time)*.7, color=(
+            yval / (max_moving_time))*.8, color=(
             27/255, 117/255, 187/255))
 
 
